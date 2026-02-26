@@ -44,12 +44,15 @@ export class WebHaptics {
       this.ensureDOM();
       if (!this.hapticLabel) return;
 
-      const TOGGLE_INTERVAL = 50;
+      const TOGGLE_INTERVAL = 10;
 
       for (let i = 0; i < pattern.length; i++) {
         if (i % 2 === 0) {
           const duration = pattern[i]!;
-          const toggleCount = Math.max(1, Math.floor(duration / TOGGLE_INTERVAL));
+          const toggleCount = Math.max(
+            1,
+            Math.floor(duration / TOGGLE_INTERVAL),
+          );
           const interval = duration / toggleCount;
 
           for (let t = 0; t < toggleCount; t++) {
