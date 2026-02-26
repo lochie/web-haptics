@@ -10,8 +10,6 @@ export class WebHaptics {
   private debug: boolean;
   private rafId: number | null = null;
   private audioCtx: AudioContext | null = null;
-  private oscillator: OscillatorNode | null = null;
-  private gainNode: GainNode | null = null;
 
   constructor(options?: WebHapticsOptions) {
     this.instanceId = ++instanceCounter;
@@ -88,19 +86,18 @@ export class WebHaptics {
   private startToggleLoop(intensity: number): void {
     if (this.rafId !== null) return;
 
-    if (this.debug && this.audioCtx) {
-      this.oscillator = this.audioCtx.createOscillator();
-      this.gainNode = this.audioCtx.createGain();
-      this.oscillator.type = "triangle";
-      this.oscillator.frequency.value = 200;
-      this.gainNode.gain.value = intensity;
-      this.oscillator.connect(this.gainNode);
-      this.gainNode.connect(this.audioCtx.destination);
-      this.oscillator.start();
-    }
-
-    const loop = () => {
+    let lastClickTime = 0;
+    const clickInterval = 1000 / 24; // 24 times per second
+    const loop = (time: number) => {
       this.hapticLabel?.click();
+      if (
+        this.debug &&
+        this.audioCtx &&
+        time - lastClickTime >= clickInterval
+      ) {
+        this.playClick(intensity);
+        lastClickTime = time;
+      }
       this.rafId = requestAnimationFrame(loop);
     };
     this.rafId = requestAnimationFrame(loop);
@@ -111,11 +108,37 @@ export class WebHaptics {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
-    if (this.oscillator) {
-      this.oscillator.stop();
-      this.oscillator = null;
-      this.gainNode = null;
+  }
+
+  private playClick(intensity: number): void {
+    if (!this.audioCtx) return;
+
+    const duration = 0.008 * 0.5;
+    const buffer = this.audioCtx.createBuffer(
+      1,
+      this.audioCtx.sampleRate * duration,
+      this.audioCtx.sampleRate,
+    );
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (50 * 0.5));
     }
+
+    const source = this.audioCtx.createBufferSource();
+    source.buffer = buffer;
+
+    const filter = this.audioCtx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = 4000;
+    filter.Q.value = 8;
+
+    const gain = this.audioCtx.createGain();
+    gain.gain.value = 0.5 * intensity;
+
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.audioCtx.destination);
+    source.start();
   }
 
   private async ensureAudio(): Promise<void> {
