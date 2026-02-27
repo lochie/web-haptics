@@ -31,9 +31,8 @@ export const Demo = () => {
           <button
             key={name}
             aria-description={pattern.description}
-            onPointerDown={() => {
-              handleTrigger(name, pattern);
-            }}
+            onTouchStart={() => handleTrigger(name, pattern)}
+            onMouseDown={() => handleTrigger(name, pattern)}
           >
             <span
               ref={(el) => {
