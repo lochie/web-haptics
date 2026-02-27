@@ -76,7 +76,7 @@ export const Demo = () => {
                 handleTrigger(name, pattern, e.clientX, e.clientY)
               }
             >
-              {name.charAt(0).toUpperCase() + name.slice(1)}
+              <span>{name.charAt(0).toUpperCase() + name.slice(1)}</span>
             </button>
           </div>
         ))}
