@@ -14,7 +14,11 @@ const emojis = {
   long: ["🐝", "🍯"],
 };
 
-export const Demo = () => {
+export const Demo = ({
+  setShaking,
+}: {
+  setShaking?: (shaking: boolean) => void;
+}) => {
   const { debug } = useApp();
   const { trigger } = useWebHaptics({
     debug,
@@ -30,6 +34,10 @@ export const Demo = () => {
     y?: number,
   ) => {
     trigger(pattern);
+    if (setShaking) {
+      setShaking(true);
+      setTimeout(() => setShaking(false), name === "long" ? 1000 : 300);
+    }
     if (x !== undefined && y !== undefined) {
       create(
         x,

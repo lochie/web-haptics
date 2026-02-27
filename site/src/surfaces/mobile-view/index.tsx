@@ -11,7 +11,13 @@ import { useState } from "react";
 import { InstallCommands } from "../installation";
 import { Usage } from "../usage";
 
-export default function MobileView({ disabled }: { disabled?: boolean }) {
+export default function MobileView({
+  disabled,
+  setShaking,
+}: {
+  disabled?: boolean;
+  setShaking?: (shaking: boolean) => void;
+}) {
   const { debug, setDebug } = useApp();
   const { trigger } = useWebHaptics({ debug });
 
@@ -51,7 +57,7 @@ export default function MobileView({ disabled }: { disabled?: boolean }) {
           </div>
         )}
 
-        {view === "play" && <Demo />}
+        {view === "play" && <Demo setShaking={setShaking} />}
         {view === "install" && (
           <div className={styles.installation}>
             <InstallCommands />

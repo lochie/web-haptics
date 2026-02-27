@@ -65,6 +65,7 @@
   align-items: flex-end;
   justify-content: center;
 }
+
 .phone {
   transform: rotate(-3deg);
   position: relative;
@@ -76,6 +77,27 @@
   background: #ffffff;
   border: 8px solid #323232;
   box-shadow: 0px 0px 84px rgba(0, 0, 0, 0.13);
+
+  &[data-shaking="true"] {
+    //animation: shake 120ms ease-in-out infinite;
+  }
+}
+@keyframes shake {
+  0% {
+    transform: rotate(-3deg);
+  }
+  25% {
+    transform: rotate(-3deg) translateY(-0.5px);
+  }
+  50% {
+    transform: rotate(-3deg) translateY(0.5px);
+  }
+  75% {
+    transform: rotate(-3deg) translateY(-1px);
+  }
+  100% {
+    transform: rotate(-3deg) translateY(0);
+  }
 }
 
 .scan {
