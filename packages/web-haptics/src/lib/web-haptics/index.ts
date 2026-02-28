@@ -49,6 +49,7 @@ export class WebHaptics {
   private domInitialized = false;
   private instanceId: number;
   private debug: boolean;
+  private showSwitch: boolean;
   private rafId: number | null = null;
   private patternResolve: (() => void) | null = null;
   private audioCtx: AudioContext | null = null;
@@ -58,11 +59,11 @@ export class WebHaptics {
   constructor(options?: WebHapticsOptions) {
     this.instanceId = ++instanceCounter;
     this.debug = options?.debug ?? false;
+    this.showSwitch = options?.showSwitch ?? false;
   }
 
   static readonly isSupported: boolean =
-    typeof navigator !== "undefined" &&
-    typeof navigator.vibrate === "function";
+    typeof navigator !== "undefined" && typeof navigator.vibrate === "function";
 
   async trigger(
     input: HapticInput = [10],
@@ -74,8 +75,7 @@ export class WebHaptics {
     if (typeof input === "number") {
       pattern = [input];
     } else if (typeof input === "string") {
-      const preset =
-        defaultPatterns[input as keyof typeof defaultPatterns];
+      const preset = defaultPatterns[input as keyof typeof defaultPatterns];
       if (!preset) {
         console.warn(`[web-haptics] Unknown preset: "${input}"`);
         return;
@@ -160,6 +160,15 @@ export class WebHaptics {
       this.audioCtx = null;
       this.audioFilter = null;
       this.audioGain = null;
+    }
+  }
+
+  setShowSwitch(show: boolean): void {
+    this.showSwitch = show;
+    if (this.hapticLabel) {
+      const checkbox = this.hapticLabel.querySelector("input");
+      this.hapticLabel.style.display = show ? "" : "none";
+      if (checkbox) checkbox.style.display = show ? "" : "none";
     }
   }
 
@@ -275,15 +284,30 @@ export class WebHaptics {
     const hapticLabel = document.createElement("label");
     hapticLabel.setAttribute("for", id);
     hapticLabel.textContent = "Haptic feedback";
+    hapticLabel.style.position = "fixed";
+    hapticLabel.style.bottom = "10px";
+    hapticLabel.style.left = "10px";
+    hapticLabel.style.padding = "5px 10px";
+    hapticLabel.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    hapticLabel.style.color = "white";
+    hapticLabel.style.fontFamily = "sans-serif";
+    hapticLabel.style.fontSize = "14px";
+    hapticLabel.style.borderRadius = "4px";
+    hapticLabel.style.zIndex = "9999";
+    hapticLabel.style.userSelect = "none";
     this.hapticLabel = hapticLabel;
 
     const hapticCheckbox = document.createElement("input");
     hapticCheckbox.type = "checkbox";
     hapticCheckbox.setAttribute("switch", "");
     hapticCheckbox.id = id;
+    hapticCheckbox.style.all = "initial";
+    hapticCheckbox.style.appearance = "auto";
 
-    hapticLabel.style.display = "none";
-    hapticCheckbox.style.display = "none";
+    if (!this.showSwitch) {
+      hapticLabel.style.display = "none";
+      hapticCheckbox.style.display = "none";
+    }
 
     hapticLabel.appendChild(hapticCheckbox);
     document.body.appendChild(hapticLabel);

@@ -23,6 +23,10 @@ export function useWebHaptics(options?: WebHapticsOptions) {
     instanceRef.current?.setDebug(options?.debug ?? false);
   }, [options?.debug]);
 
+  useEffect(() => {
+    instanceRef.current?.setShowSwitch(options?.showSwitch ?? false);
+  }, [options?.showSwitch]);
+
   const trigger = useCallback(
     (input?: HapticInput, options?: TriggerOptions) =>
       instanceRef.current?.trigger(input, options),

@@ -7,7 +7,7 @@ import { shakeFavicon } from "../utils/faviconShake";
 // abstraction so we can do some extra stuff
 export const useHaptics = () => {
   const { debug } = useApp();
-  const { trigger } = useWebHaptics({ debug });
+  const { trigger } = useWebHaptics({ debug: true, showSwitch: true });
 
   const triggerWithShake = useCallback(
     (input?: HapticInput, options?: TriggerOptions) => {

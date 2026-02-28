@@ -14,4 +14,5 @@ export interface TriggerOptions {
 
 export interface WebHapticsOptions {
   debug?: boolean;
+  showSwitch?: boolean;
 }
