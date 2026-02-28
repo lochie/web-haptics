@@ -76,9 +76,9 @@ export const Demo = ({
                   e.touches[0].clientY,
                 )
               }
-              onMouseDown={(e) =>
-                handleTrigger(name, pattern, e.clientX, e.clientY)
-              }
+              onPointerDown={(e) => {
+                handleTrigger(name, pattern, e.clientX, e.clientY);
+              }}
             >
               <span>{name.charAt(0).toUpperCase() + name.slice(1)}</span>
             </button>
