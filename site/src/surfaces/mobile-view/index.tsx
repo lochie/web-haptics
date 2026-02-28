@@ -43,13 +43,16 @@ export default function MobileView({
           <button
             onTouchStart={() => {
               trigger();
+              setTimeout(() => {
+                trigger();
+              }, 200);
             }}
             className={styles.logoButton}
           >
             <Logo />
           </button>
           <motion.button
-            onTap={() => {
+            onTapStart={() => {
               trigger();
             }}
             className={styles.logoButton}
