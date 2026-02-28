@@ -41,7 +41,7 @@ export default function MobileView({
       <div className={styles.container}>
         <div className={styles.header}>
           <button
-            onPointerDownCapture={() => {
+            onPointerDown={() => {
               trigger();
             }}
             className={styles.logoButton}
