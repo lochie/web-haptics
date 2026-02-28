@@ -41,13 +41,21 @@ export default function MobileView({
       <div className={styles.container}>
         <div className={styles.header}>
           <button
-            onPointerDown={() => {
+            onTouchStart={() => {
               trigger();
             }}
             className={styles.logoButton}
           >
             <Logo />
           </button>
+          <motion.button
+            onTap={() => {
+              trigger();
+            }}
+            className={styles.logoButton}
+          >
+            <Logo />
+          </motion.button>
           <p>Haptic feedback for the mobile web</p>
         </div>
 
