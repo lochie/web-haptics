@@ -10,7 +10,7 @@ import { useApp } from "../../context/app";
 
 const examples = {
   vanilla: `const haptics = new WebHaptics();
-haptics.trigger(); // light tap
+haptics.trigger(); // medium impact
 haptics.trigger(defaultPatterns.success);
 `,
   react: `const { trigger } = useWebHaptics();

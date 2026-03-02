@@ -6,6 +6,7 @@
 
 .presets {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.25rem;
   align-items: center;
   font-size: 0.75rem;
@@ -57,11 +58,20 @@
     &[data-pattern="success"] {
       --color: var(--green);
     }
-    &[data-pattern="nudge"] {
-      --color: var(--blue);
+    &[data-pattern="warning"] {
+      --color: var(--orange);
     }
     &[data-pattern="error"] {
       --color: var(--red);
+    }
+    &[data-pattern="light"],
+    &[data-pattern="medium"],
+    &[data-pattern="heavy"],
+    &[data-pattern="soft"],
+    &[data-pattern="rigid"],
+    &[data-pattern="selection"],
+    &[data-pattern="nudge"] {
+      --color: var(--blue);
     }
     &[data-pattern="buzz"] {
       --color: var(--orange);

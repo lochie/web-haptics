@@ -157,7 +157,7 @@ export class WebHaptics {
     typeof navigator.vibrate === "function";
 
   async trigger(
-    input: HapticInput = [{ duration: 10 }],
+    input: HapticInput = [{ duration: 25, intensity: 0.7 }],
     options?: TriggerOptions,
   ): Promise<void> {
     const normalized = normalizeInput(input);

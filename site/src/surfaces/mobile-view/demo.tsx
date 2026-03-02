@@ -8,6 +8,8 @@ import { useHaptics } from "../../hooks/useHaptics";
 // add emoji sets with [emoji, weight, canFlip?] tuples
 type EmojiEntry = [emoji: string, weight: number, canFlip?: boolean];
 
+const demoPresets = ["success", "warning", "nudge", "buzz"] as const;
+
 const emojis = {
   success: [
     ["✅", 3],
@@ -16,17 +18,17 @@ const emojis = {
     ["💚", 2],
     ["👍", 3, true],
   ] as EmojiEntry[],
+  warning: [
+    ["⚠️", 3],
+    ["😬", 2],
+    ["👀", 2],
+    ["🫣", 1],
+  ] as EmojiEntry[],
   nudge: [
     ["🫨", 2, true],
     ["🙉", 3],
     ["👉", 2, true],
     ["😳", 1],
-  ] as EmojiEntry[],
-  error: [
-    ["⛔️", 3],
-    ["🚨", 1],
-    ["🚫", 3],
-    ["🙅‍♀️", 1, true],
   ] as EmojiEntry[],
   buzz: [
     ["🐝", 12, true],
@@ -73,6 +75,7 @@ export const Demo = ({
         name === "buzz" ? 1000 : undefined,
       );
     }
+
     const span = spanRefs.current.get(name);
     if (!span) return;
     span.classList.remove(styles[name]!);
@@ -83,7 +86,7 @@ export const Demo = ({
   return (
     <div className={styles.demo}>
       <div className={styles.buttons}>
-        {Object.entries(defaultPatterns).map(([name, pattern]) => (
+        {demoPresets.map((name) => (
           <div
             key={name}
             className={styles.button}
@@ -98,7 +101,7 @@ export const Demo = ({
           >
             <button
               data-pattern={name}
-              aria-description={pattern.description}
+              aria-description={defaultPatterns[name].description}
               onClick={(e) => {
                 const x =
                   e.clientX ||
@@ -108,7 +111,7 @@ export const Demo = ({
                   e.clientY ||
                   e.currentTarget.getBoundingClientRect().top +
                     e.currentTarget.offsetHeight / 2;
-                handleTrigger(name, pattern, x, y);
+                handleTrigger(name, defaultPatterns[name], x, y);
               }}
             >
               <span>{name.charAt(0).toUpperCase() + name.slice(1)}</span>
