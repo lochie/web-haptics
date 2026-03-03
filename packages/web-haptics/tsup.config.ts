@@ -9,7 +9,6 @@ export default defineConfig((options) => [
     },
     format: ["cjs", "esm"],
     dts: true,
-    clean: true,
     sourcemap: false,
     target: "es2022",
     external: ["react"],

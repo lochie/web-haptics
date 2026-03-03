@@ -38,7 +38,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "rm -rf dist && tsup",
     "dev": "tsup --watch",
     "lint": "eslint -c .eslintrc.cjs ./src/**/*.{ts,tsx}",
     "lint:fix": "eslint --fix -c .eslintrc.cjs ./src/**/*.{ts,tsx}",
