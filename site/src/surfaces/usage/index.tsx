@@ -9,11 +9,14 @@ import { useWebHaptics } from "web-haptics/react";
 import { useApp } from "../../context/app";
 
 const examples = {
-  vanilla: `const haptics = new WebHaptics();
+  vanilla: `import { WebHaptics, defaultPatterns } from "web-haptics";
+
+const haptics = new WebHaptics();
 haptics.trigger(); // medium impact
-haptics.trigger(defaultPatterns.success);
-`,
-  react: `const { trigger } = useWebHaptics();
+haptics.trigger(defaultPatterns.success);`,
+  react: `import { useWebHaptics } from "web-haptics/react";
+
+const { trigger } = useWebHaptics();
 
 <button onClick={() => trigger()}>Tap me</button>`,
   vue: `<script setup>
@@ -86,9 +89,7 @@ export const Usage = () => {
       </div>
 
       <CodeBlock
-        code={`import { useWebHaptics } from '${frameworks[frameworkIndex % frameworks.length].entrypoint}';
-
-${frameworks[frameworkIndex % frameworks.length].example}`}
+        code={frameworks[frameworkIndex % frameworks.length].example}
       />
     </div>
   );
