@@ -1,3 +1,20 @@
 .DS_Store
 node_modules
 apps/*/dist
+
+# IDE
+.idea/
+.vscode/
+
+# Package managers
+.pnpm-store/
+.yarn/
+.npm/
+
+# Build artifacts
+dist/
+*.log
+*.tsbuildinfo
+
+# OS
+Thumbs.db

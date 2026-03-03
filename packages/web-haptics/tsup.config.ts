@@ -40,4 +40,16 @@ export default defineConfig((options) => [
     external: ["svelte"],
     minify: !options.watch,
   },
+  // Angular
+  {
+    entry: {
+      "angular/index": "src/angular/index.ts",
+    },
+    format: ["cjs", "esm"],
+    dts: true,
+    sourcemap: false,
+    target: "es2022",
+    external: ["@angular/core"],
+    minify: !options.watch,
+  },
 ]);
