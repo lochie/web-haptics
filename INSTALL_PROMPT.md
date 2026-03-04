@@ -34,9 +34,9 @@ React:
 ```tsx
 import { useWebHaptics } from "web-haptics/react";
 
-const { trigger } = useWebHaptics();
+const haptic = useWebHaptics();
 
-<button onClick={() => trigger()}>Tap me</button>;
+<button onClick={() => haptic.trigger()}>Tap me</button>;
 ```
 
 Vue:
@@ -44,11 +44,11 @@ Vue:
 ```vue
 <script setup>
 import { useWebHaptics } from "web-haptics/vue";
-const { trigger } = useWebHaptics();
+const haptic = useWebHaptics();
 </script>
 
 <template>
-  <button @click="trigger()">Tap me</button>
+  <button @click="haptic.trigger()">Tap me</button>
 </template>
 ```
 
@@ -58,11 +58,11 @@ Svelte:
 <script>
   import { createWebHaptics } from "web-haptics/svelte";
   import { onDestroy } from "svelte";
-  const { trigger, destroy } = createWebHaptics();
-  onDestroy(destroy);
+  const haptic = createWebHaptics();
+  onDestroy(() => haptic.destroy());
 </script>
 
-<button on:click={() => trigger()}>Tap me</button>
+<button on:click={() => haptic.trigger()}>Tap me</button>
 ```
 
 Vanilla JS:
@@ -90,9 +90,9 @@ Nuxt/SvelteKit: works directly, library handles SSR.
    ```js
    try {
      await submit();
-     trigger("success");
+     haptic.trigger("success");
    } catch {
-     trigger("error");
+     haptic.trigger("error");
    }
    ```
 
