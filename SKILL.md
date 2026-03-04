@@ -59,6 +59,16 @@ const haptic = useWebHaptics();
 </template>
 ```
 
+SolidJS:
+
+```tsx
+import { useWebHaptics } from "web-haptics/solid";
+
+const haptic = useWebHaptics();
+
+<button onClick={() => haptic.trigger()}>Tap me</button>;
+```
+
 Svelte:
 
 ```svelte

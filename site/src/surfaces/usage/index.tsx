@@ -27,6 +27,11 @@ const { trigger } = useWebHaptics();
 <template>
   <button @click="trigger()">Tap me</button>
 </template>`,
+  solid: `import { useWebHaptics } from "web-haptics/solid";
+
+const { trigger } = useWebHaptics();
+
+<button onClick={() => trigger()}>Tap me</button>`,
   svelte: `<script>
   import { createWebHaptics } from "web-haptics/svelte";
   import { onDestroy } from "svelte";
@@ -55,6 +60,12 @@ const frameworks = [
     entrypoint: "web-haptics/vue",
     logo: <Logos.VueLogo />,
     example: examples.vue,
+  },
+  {
+    name: "SolidJS",
+    entrypoint: "web-haptics/solid",
+    logo: <Logos.SolidLogo />,
+    example: examples.solid,
   },
   {
     name: "Svelte",
