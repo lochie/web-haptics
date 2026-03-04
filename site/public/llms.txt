@@ -1,0 +1,65 @@
+# web-haptics
+
+> Haptic feedback for the web. Zero dependencies. Uses the Web Vibration API with framework hooks for React, Vue, and Svelte. Silently no-ops on unsupported platforms.
+
+## Install
+
+npm i web-haptics
+
+## API
+
+`trigger(preset?)` fires a haptic pattern. Called with no arguments, it defaults to a medium impact tap.
+
+Preset strings:
+- "success" — positive outcome (form saved, payment confirmed)
+- "warning" — cautionary (destructive action ahead, approaching limit)
+- "error" — negative outcome (validation failure, network error)
+- "light" — subtle tap (small toggle, minor interaction)
+- "medium" — standard tap (button press, snap-to-position)
+- "heavy" — strong tap (major state change, force press)
+- "selection" — discrete tick (picker scroll, slider detent, segment switch)
+
+## Framework Usage
+
+React:
+```tsx
+import { useWebHaptics } from "web-haptics/react";
+const haptic = useWebHaptics();
+haptic.trigger("success");
+```
+
+Vue:
+```vue
+import { useWebHaptics } from "web-haptics/vue";
+const haptic = useWebHaptics();
+haptic.trigger("success");
+```
+
+Svelte:
+```svelte
+import { createWebHaptics } from "web-haptics/svelte";
+const haptic = createWebHaptics();
+haptic.trigger("success");
+```
+
+Vanilla:
+```js
+import { WebHaptics } from "web-haptics";
+const haptics = new WebHaptics();
+haptics.trigger("success");
+```
+
+Next.js: add "use client" to components using useWebHaptics().
+
+## Other Methods
+
+- `cancel()` — stop current vibration
+- `destroy()` — clean up resources
+- `setDebug(bool)` — toggle audio feedback for desktop testing
+- `WebHaptics.isSupported` — static property, check device support
+
+## Links
+
+- [GitHub](https://github.com/lochie/web-haptics)
+- [npm](https://www.npmjs.com/package/web-haptics)
+- [SKILL.md](https://github.com/lochie/web-haptics/blob/main/SKILL.md): Agent skill with full usage guidelines and Apple HIG design rules
