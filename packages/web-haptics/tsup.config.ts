@@ -28,6 +28,18 @@ export default defineConfig((options) => [
     external: ["vue"],
     minify: !options.watch,
   },
+  // SolidJS
+  {
+    entry: {
+      "solid/index": "src/solid/index.ts",
+    },
+    format: ["cjs", "esm"],
+    dts: true,
+    sourcemap: false,
+    target: "es2022",
+    external: ["solid-js"],
+    minify: !options.watch,
+  },
   // Svelte
   {
     entry: {

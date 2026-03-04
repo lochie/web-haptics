@@ -28,6 +28,11 @@
       "import": "./dist/vue/index.mjs",
       "require": "./dist/vue/index.js"
     },
+    "./solid": {
+      "types": "./dist/solid/index.d.ts",
+      "import": "./dist/solid/index.mjs",
+      "require": "./dist/solid/index.js"
+    },
     "./svelte": {
       "types": "./dist/svelte/index.d.ts",
       "import": "./dist/svelte/index.mjs",
@@ -53,6 +58,7 @@
     "mobile",
     "react",
     "vue",
+    "solidjs",
     "svelte",
     "typescript"
   ],
@@ -71,6 +77,7 @@
     "react": ">=18",
     "react-dom": ">=18",
     "vue": ">=3",
+    "solid-js": ">=1",
     "svelte": ">=4"
   },
   "peerDependenciesMeta": {
@@ -81,6 +88,9 @@
       "optional": true
     },
     "vue": {
+      "optional": true
+    },
+    "solid-js": {
       "optional": true
     },
     "svelte": {
@@ -103,6 +113,7 @@
     "prettier": "^3.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "solid-js": "^1.9.11",
     "svelte": "^4.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
