@@ -19,9 +19,10 @@ export const defaultPatterns = {
   error: {
     // three rapid harsh taps indicating an error.
     pattern: [
-      { duration: 40, intensity: 0.9 },
+      { duration: 40, intensity: 0.7 },
+      { delay: 40, duration: 40, intensity: 0.7 },
       { delay: 40, duration: 40, intensity: 0.9 },
-      { delay: 40, duration: 40, intensity: 0.9 },
+      { delay: 40, duration: 50, intensity: 0.6 },
     ],
   },
 
