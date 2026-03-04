@@ -12,6 +12,7 @@ const pkgCmds = {
   pnpm: "pnpm i web-haptics",
   yarn: "yarn add web-haptics",
   bun: "bun i web-haptics",
+  skill: "npx skills add lochie/web-haptics",
 };
 
 export const InstallCommands = () => {
