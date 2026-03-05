@@ -40,4 +40,18 @@ export default defineConfig((options) => [
     external: ["svelte"],
     minify: !options.watch,
   },
+  // Standalone IIFE for <script> tag usage
+  {
+    entry: {
+      "web-haptics": "src/index.ts",
+    },
+    format: ["iife"],
+    globalName: "WebHapticsLib",
+    sourcemap: false,
+    target: "es2017",
+    minify: !options.watch,
+    footer: {
+      js: `if(typeof window!=="undefined"){window.WebHaptics=WebHapticsLib.WebHaptics;window.WebHapticsLib=WebHapticsLib;}`,
+    },
+  },
 ]);

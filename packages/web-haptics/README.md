@@ -57,6 +57,23 @@ const haptics = new WebHaptics();
 haptics.trigger("success");
 ```
 
+## Standalone `<script>` Tag
+
+You can use web-haptics directly in the browser without any build tools:
+
+```html
+<script src="/path/to/web-haptics.global.js"></script>
+<script>
+  const haptics = new WebHaptics();
+  haptics.trigger("success");
+</script>
+```
+
+The script tag makes the following globals available:
+- `WebHaptics` — the main class
+- `WebHapticsLib.defaultPatterns` — built-in haptic presets
+- `WebHapticsLib.version` — library version
+
 ## Built-in Presets
 
 | Name      | Pattern                                                          | Description                    |

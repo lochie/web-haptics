@@ -12,6 +12,8 @@
     "directory": "packages/web-haptics"
   },
   "types": "dist/index.d.ts",
+  "unpkg": "dist/web-haptics.global.js",
+  "jsdelivr": "dist/web-haptics.global.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
