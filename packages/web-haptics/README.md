@@ -62,7 +62,7 @@ haptics.trigger("success");
 You can use web-haptics directly in the browser without any build tools:
 
 ```html
-<script src="https://unpkg.com/web-haptics/dist/web-haptics.global.js"></script>
+<script src="/path/to/web-haptics.global.js"></script>
 <script>
   const haptics = new WebHaptics();
   haptics.trigger("success");
