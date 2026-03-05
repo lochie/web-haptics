@@ -170,35 +170,10 @@ export const Docs = () => {
         </div>
       </details>
 
-      <details className={styles.section}>
-        <summary>React</summary>
+
         <CodeBlock
-          code={`import { useWebHaptics } from 'web-haptics/react';
-
-const { trigger, cancel, isSupported } = useWebHaptics({
-  debug: false,
-});`}
+          code={`import { trigger, cancel, isSupported } from 'web-haptics';`}
         />
-      </details>
-
-      <details className={styles.section}>
-        <summary>Vue</summary>
-        <CodeBlock
-          code={`import { useWebHaptics } from 'web-haptics/vue';
-
-const { trigger, cancel, isSupported } = useWebHaptics();`}
-        />
-      </details>
-
-      <details className={styles.section}>
-        <summary>Svelte</summary>
-        <CodeBlock
-          code={`import { createWebHaptics } from 'web-haptics/svelte';
-
-const { trigger, cancel, destroy, isSupported } = createWebHaptics();
-onDestroy(destroy);`}
-        />
-      </details>
     </div>
   );
 };

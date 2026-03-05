@@ -1,6 +1,4 @@
-import { WebHaptics } from "web-haptics";
-
-const haptics = new WebHaptics();
+import { trigger } from "web-haptics";
 
 const button = document.getElementById("trigger-btn")!;
-button.addEventListener("click", () => haptics.trigger());
+button.addEventListener("click", () => trigger());

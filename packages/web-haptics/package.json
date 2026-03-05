@@ -4,7 +4,7 @@
   "description": "Haptic feedback for the mobile web.",
   "homepage": "https://haptics.lochie.me",
   "sideEffects": false,
-  "author": "Lochie Axon",
+  "author": "Lochie Axon & Sam Denty",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -70,8 +70,8 @@
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
-    "vue": ">=3",
-    "svelte": ">=4"
+    "svelte": ">=4",
+    "vue": ">=3"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -107,5 +107,8 @@
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
     "vue": "^3.3.0"
+  },
+  "dependencies": {
+    "ios-vibrator-pro-max": "^1.3.2"
   }
 }

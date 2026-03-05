@@ -14,9 +14,5 @@ export type HapticInput = number | string | HapticPattern | HapticPreset;
 
 export interface TriggerOptions {
   intensity?: number;
-}
-
-export interface WebHapticsOptions {
   debug?: boolean;
-  showSwitch?: boolean;
 }

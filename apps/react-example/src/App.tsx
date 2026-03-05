@@ -1,8 +1,6 @@
-import { useWebHaptics } from "web-haptics/react";
+import { trigger } from "web-haptics";
 
 export default function App() {
-  const { trigger } = useWebHaptics();
-
   return (
     <div
       style={{

@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      "web-haptics/vue": path.resolve(__dirname, "../../packages/web-haptics/src/vue"),
+      "web-haptics": path.resolve(__dirname, "../../packages/web-haptics/src"),
     },
   },
 });

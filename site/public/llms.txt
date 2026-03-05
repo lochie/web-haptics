@@ -19,44 +19,28 @@ Preset strings:
 - "heavy" — strong tap (major state change, force press)
 - "selection" — discrete tick (picker scroll, slider detent, segment switch)
 
-## Framework Usage
+## Usage
 
-React:
 ```tsx
-import { useWebHaptics } from "web-haptics/react";
-const haptic = useWebHaptics();
-haptic.trigger("success");
+import { trigger } from "web-haptics";
+trigger('success');
 ```
 
-Vue:
-```vue
-import { useWebHaptics } from "web-haptics/vue";
-const haptic = useWebHaptics();
-haptic.trigger("success");
+```tsx
+import { trigger } from "web-haptics";
+trigger('success', {
+  // toggle audio feedback for desktop testing
+  debug: true
+});
 ```
 
-Svelte:
-```svelte
-import { createWebHaptics } from "web-haptics/svelte";
-const haptic = createWebHaptics();
-haptic.trigger("success");
-```
+Next.js: add "use client" to components using web-haptics.
 
-Vanilla:
-```js
-import { WebHaptics } from "web-haptics";
-const haptics = new WebHaptics();
-haptics.trigger("success");
-```
-
-Next.js: add "use client" to components using useWebHaptics().
-
-## Other Methods
+## Other Exports
 
 - `cancel()` — stop current vibration
 - `destroy()` — clean up resources
-- `setDebug(bool)` — toggle audio feedback for desktop testing
-- `WebHaptics.isSupported` — static property, check device support
+- `isSupported` — static property, check device support
 
 ## Links
 

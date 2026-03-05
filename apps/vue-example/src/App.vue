@@ -5,9 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { useWebHaptics } from "web-haptics/vue";
-
-const { trigger } = useWebHaptics();
+import { trigger } from "web-haptics";
 </script>
 
 <style>

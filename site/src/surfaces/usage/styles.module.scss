@@ -5,36 +5,6 @@
   justify-content: center;
   margin: -1rem 0 0;
 
-  .commands {
-    display: flex;
-    gap: 1.5rem;
-
-    a,
-    button {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 1rem 0;
-      font-size: 0.8125rem;
-      font-weight: 500;
-      color: var(--color);
-      opacity: 0.35;
-      transition: opacity 100ms ease;
-      &:hover,
-      &[data-active="true"] {
-        opacity: 1;
-      }
-
-      &[data-active="true"] {
-        cursor: default;
-      }
-
-      svg {
-        display: block;
-      }
-    }
-  }
-
   .cmd {
     width: 100%;
   }

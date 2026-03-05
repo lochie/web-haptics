@@ -11,11 +11,9 @@ npm i web-haptics
 ## React
 
 ```tsx
-import { useWebHaptics } from "web-haptics/react";
+import { trigger } from "web-haptics";
 
 function App() {
-  const { trigger } = useWebHaptics();
-
   return <button onClick={() => trigger("success")}>Tap me</button>;
 }
 ```
@@ -24,9 +22,7 @@ function App() {
 
 ```vue
 <script setup>
-import { useWebHaptics } from "web-haptics/vue";
-
-const { trigger } = useWebHaptics();
+import { trigger } from "web-haptics";
 </script>
 
 <template>
@@ -38,11 +34,7 @@ const { trigger } = useWebHaptics();
 
 ```svelte
 <script>
-import { createWebHaptics } from "web-haptics/svelte";
-import { onDestroy } from "svelte";
-
-const { trigger, destroy } = createWebHaptics();
-onDestroy(destroy);
+import { trigger } from "web-haptics";
 </script>
 
 <button on:click={() => trigger("success")}>Tap me</button>
@@ -80,19 +72,13 @@ trigger({
 
 ## API
 
-### `new WebHaptics(options?)`
-
-Create a new instance.
-
-- `options.debug` — enable audio feedback for testing on desktop (default `false`)
-- `options.showSwitch` — show the haptic feedback toggle switch (default `false`)
-
 ### `trigger(input?, options?): Promise<void>`
 
 Trigger haptic feedback.
 
 - `input` — preset name (`"success"`), duration in ms, `number[]`, `Vibration[]`, or `HapticPreset`
 - `options.intensity` — override default intensity (0–1, default `0.5`)
+- `options.debug` — override default intensity (0–1, default `0.5`)
 
 ### `cancel()`
 
@@ -106,11 +92,9 @@ Clean up DOM elements and audio resources. Call when the instance is no longer n
 
 Enable or disable debug audio feedback.
 
-### `setShowSwitch(show: boolean)`
-
 Show or hide the haptic feedback toggle switch.
 
-### `WebHaptics.isSupported`
+### `isSupported`
 
 Static boolean — `true` if the device supports the Vibration API.
 
@@ -132,3 +116,4 @@ You might also like:
 # Acknowledgements
 
 - Special thanks to [Alex](https://x.com/alexvanderzon) for assistance with the site design.
+- https://npmjs.com/package/ios-vibrator-pro-max

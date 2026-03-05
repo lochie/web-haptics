@@ -11,16 +11,24 @@ npm i web-haptics
 ## Usage
 
 ```tsx
-import { useWebHaptics } from "web-haptics/react";
+import { trigger } from "web-haptics";
 
 function App() {
-  const { trigger } = useWebHaptics();
-
   return <button onClick={() => trigger("success")}>Tap me</button>;
 }
 ```
 
 See the [package README](packages/web-haptics/README.md) for Vue, Svelte, and vanilla examples.
+
+## Durations longer than 1000ms
+
+This will block the main thread for the duration of the vibration pattern. Only vibration patterns longer than 1s total will block. Blocking is required as it's the only way to extend the trusted event grant of the click handler (async vibrations have expiration)
+
+```ts
+import { enableMainThreadBlocking } from "web-haptics";
+
+enableMainThreadBlocking(true);
+```
 
 # Contributing
 
@@ -56,3 +64,4 @@ You might also like:
 # Acknowledgements
 
 - Special thanks to [Alex](https://x.com/alexvanderzon) for assistance with the site design.
+- https://npmjs.com/package/ios-vibrator-pro-max
