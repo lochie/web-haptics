@@ -44,8 +44,9 @@ import { useWebHaptics } from "web-haptics/react";
 // Options: { debug?: boolean, showSwitch?: boolean }
 const haptic = useWebHaptics();
 
-// Methods: trigger(input?, options?), cancel(), isSupported
-// Trigger options: { intensity?: number } (0-1)
+// Methods: trigger(input?, options?), cancel()
+// Properties: isSupported: boolean
+// Trigger options: { intensity?: number } (0-1, default 0.5)
 
 <button onClick={() => haptic.trigger()}>Tap me</button>;
 ```
