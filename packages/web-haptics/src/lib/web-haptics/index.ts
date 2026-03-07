@@ -152,8 +152,13 @@ export class WebHaptics {
     this.showSwitch = options?.showSwitch ?? false;
   }
 
-  static readonly isSupported: boolean =
+  private static readonly supportsVibrationAPI: boolean =
     typeof navigator !== "undefined" && typeof navigator.vibrate === "function";
+
+  static readonly isSupported: boolean =
+    typeof navigator !== "undefined" &&
+    (typeof navigator.vibrate === "function" ||
+      navigator.maxTouchPoints > 0);
 
   async trigger(
     input: HapticInput = [{ duration: 25, intensity: 0.7 }],
@@ -186,11 +191,11 @@ export class WebHaptics {
       }
     }
 
-    if (WebHaptics.isSupported) {
+    if (WebHaptics.supportsVibrationAPI) {
       navigator.vibrate(toVibratePattern(vibrations, defaultIntensity));
     }
 
-    if (!WebHaptics.isSupported || this.debug) {
+    if (!WebHaptics.supportsVibrationAPI || this.debug) {
       this.ensureDOM();
       if (!this.hapticLabel) return;
 
@@ -222,7 +227,7 @@ export class WebHaptics {
 
   cancel(): void {
     this.stopPattern();
-    if (WebHaptics.isSupported) {
+    if (WebHaptics.supportsVibrationAPI) {
       navigator.vibrate(0);
     }
   }
