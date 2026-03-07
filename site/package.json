@@ -26,7 +26,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "postcss": "^8",
-    "torph": "^0.0.5",
+    "torph": "^0.0.9",
     "typescript": "^5.0.2",
     "vite": "^6.4.1"
   }
