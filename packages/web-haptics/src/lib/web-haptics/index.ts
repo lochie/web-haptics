@@ -56,6 +56,13 @@ function normalizeInput(input: HapticInput): {
 /**
  * Apply PWM modulation to a single vibration duration at a given intensity.
  * Returns the flat on/off segments for this vibration.
+ *
+ * NOTE: This is only used for the checkbox-toggle fallback timing (iOS).
+ * For navigator.vibrate() on Android, use toDirectVibratePattern() instead,
+ * because phone vibration motors are physical mass-on-spring systems that
+ * need sustained drive time (30ms+) to produce perceptible output. PWM
+ * modulation chops durations into sub-20ms pulses that are imperceptible
+ * on most Android devices.
  */
 function modulateVibration(duration: number, intensity: number): number[] {
   if (intensity >= 1) return [duration];
@@ -82,8 +89,65 @@ function modulateVibration(duration: number, intensity: number): number[] {
 }
 
 /**
+ * Convert Vibration[] to a flat number[] pattern for navigator.vibrate()
+ * WITHOUT PWM modulation. Intensity is applied by scaling the duration
+ * directly, which works reliably with physical vibration motors.
+ *
+ * Phone vibration motors need sustained drive times to be perceptible.
+ * A "selection" preset at 0.3 intensity with PWM becomes ~2ms on-time
+ * per 20ms cycle — completely imperceptible. Scaling duration instead
+ * gives e.g. max(5, 8 * 0.3) ≈ 5ms, still short but at full motor power.
+ */
+function toDirectVibratePattern(
+  vibrations: Vibration[],
+  defaultIntensity: number,
+): number[] {
+  const MIN_VIBRATE_MS = 5;
+  const result: number[] = [];
+
+  for (const vib of vibrations) {
+    const intensity = Math.max(0, Math.min(1, vib.intensity ?? defaultIntensity));
+    const delay = vib.delay ?? 0;
+
+    if (delay > 0) {
+      if (result.length > 0 && result.length % 2 === 0) {
+        result[result.length - 1]! += delay;
+      } else {
+        if (result.length === 0) result.push(0);
+        result.push(delay);
+      }
+    }
+
+    if (intensity <= 0) {
+      if (result.length > 0 && result.length % 2 === 0) {
+        result[result.length - 1]! += vib.duration;
+      } else if (vib.duration > 0) {
+        result.push(0);
+        result.push(vib.duration);
+      }
+      continue;
+    }
+
+    // Scale duration by intensity — full motor power, shorter burst
+    const scaled = Math.max(MIN_VIBRATE_MS, Math.round(vib.duration * intensity));
+    result.push(scaled);
+
+    // If duration was reduced, add remaining as silence
+    const remainder = vib.duration - scaled;
+    if (remainder > 0) {
+      result.push(remainder);
+    }
+  }
+
+  return result;
+}
+
+/**
  * Convert Vibration[] to the flat number[] pattern for navigator.vibrate(),
  * applying per-vibration PWM intensity modulation.
+ *
+ * @deprecated Used only for the checkbox-toggle fallback. For navigator.vibrate(),
+ * prefer toDirectVibratePattern() which produces perceptible output on real devices.
  */
 function toVibratePattern(
   vibrations: Vibration[],
@@ -187,7 +251,7 @@ export class WebHaptics {
     }
 
     if (WebHaptics.isSupported) {
-      navigator.vibrate(toVibratePattern(vibrations, defaultIntensity));
+      navigator.vibrate(toDirectVibratePattern(vibrations, defaultIntensity));
     }
 
     if (!WebHaptics.isSupported || this.debug) {
