@@ -141,6 +141,7 @@ export class WebHaptics {
   private showSwitch: boolean;
   private rafId: number | null = null;
   private patternResolve: (() => void) | null = null;
+  private vibrationLoopId: ReturnType<typeof setTimeout> | null = null;
   private audioCtx: AudioContext | null = null;
   private audioFilter: BiquadFilterNode | null = null;
   private audioGain: GainNode | null = null;
@@ -170,6 +171,8 @@ export class WebHaptics {
       Math.min(1, options?.intensity ?? 0.5),
     );
 
+    const isInfinite = options?.repeat === true;
+
     // Validate and clamp durations
     for (const vib of vibrations) {
       if (vib.duration > MAX_PHASE_MS) vib.duration = MAX_PHASE_MS;
@@ -187,7 +190,23 @@ export class WebHaptics {
     }
 
     if (WebHaptics.isSupported) {
-      navigator.vibrate(toVibratePattern(vibrations, defaultIntensity));
+      const pattern = toVibratePattern(vibrations, defaultIntensity);
+      navigator.vibrate(pattern);
+
+      if (isInfinite) {
+        // Re-trigger native vibration just before the pattern ends so there
+        // is no perceptible gap. cancel() clears this loop via stopPattern().
+        const totalMs = pattern.reduce((sum, n) => sum + n, 0);
+        const scheduleVibrationLoop = () => {
+          this.vibrationLoopId = setTimeout(() => {
+            if (WebHaptics.isSupported) {
+              navigator.vibrate(pattern);
+              scheduleVibrationLoop();
+            }
+          }, Math.max(1, totalMs - 20));
+        };
+        scheduleVibrationLoop();
+      }
     }
 
     if (!WebHaptics.isSupported || this.debug) {
@@ -216,7 +235,12 @@ export class WebHaptics {
         }
       }
 
-      await this.runPattern(vibrations, defaultIntensity, firstClickFired);
+      await this.runPattern(
+        vibrations,
+        defaultIntensity,
+        firstClickFired,
+        isInfinite,
+      );
     }
   }
 
@@ -268,6 +292,10 @@ export class WebHaptics {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
+    if (this.vibrationLoopId !== null) {
+      clearTimeout(this.vibrationLoopId);
+      this.vibrationLoopId = null;
+    }
     this.patternResolve?.();
     this.patternResolve = null;
   }
@@ -276,6 +304,7 @@ export class WebHaptics {
     vibrations: Vibration[],
     defaultIntensity: number,
     firstClickFired: boolean,
+    isInfinite = false,
   ): Promise<void> {
     return new Promise((resolve) => {
       this.patternResolve = resolve;
@@ -306,6 +335,13 @@ export class WebHaptics {
         const elapsed = time - startTime;
 
         if (elapsed >= totalDuration) {
+          if (isInfinite) {
+            // Restart the pattern from the beginning
+            startTime = 0;
+            lastToggleTime = -1;
+            this.rafId = requestAnimationFrame(loop);
+            return;
+          }
           this.rafId = null;
           this.patternResolve = null;
           resolve();
