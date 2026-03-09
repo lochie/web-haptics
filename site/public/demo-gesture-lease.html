@@ -727,8 +727,7 @@
       // Theory: events crossing the shadow boundary are retargeted by WebKit —
       // maybe the gesture context check evaluates differently for shadow-internal elements.
       const shadowHost = document.createElement("div");
-      shadowHost.style.cssText =
-        "position:fixed;top:-200px;pointer-events:none;";
+      shadowHost.style.cssText = "position:fixed;right:0;top:0;";
       document.body.appendChild(shadowHost);
       const shadowRoot = shadowHost.attachShadow({ mode: "open" });
       const shadowCb = document.createElement("input");
