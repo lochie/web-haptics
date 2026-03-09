@@ -433,7 +433,14 @@
       function fireHaptic() {
         ensureCheckbox();
         hapticLabel.focus();
-        hapticLabel.click();
+        const event = new KeyboardEvent("keydown", {
+          key: " ",
+          code: "Space",
+          keyCode: 32,
+          which: 32,
+          bubbles: true,
+        });
+        hapticLabel.dispatchEvent(event);
       }
 
       // ─── Global gesture tracking ──────────────────────────────────────────────
