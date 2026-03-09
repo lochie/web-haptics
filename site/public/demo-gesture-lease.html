@@ -292,6 +292,55 @@
         height: 1px;
         background: #1a1a1a;
       }
+
+      /* Shadow DOM demo */
+      .shadow-btn {
+        background: #1c1c1e;
+        border: 1px solid #333;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 16px;
+        width: 100%;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .shadow-btn:active { background: #2a2a2e; }
+      .shadow-btn:disabled { opacity: 0.4; }
+
+      .shadow-progress-track {
+        height: 4px;
+        background: #222;
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .shadow-progress-bar {
+        height: 100%;
+        width: 0%;
+        background: #a78bfa;
+        border-radius: 99px;
+        transition: width 0.1s linear;
+      }
+
+      .shadow-dots {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .shadow-dot {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #222;
+        border: 1px solid #333;
+        transition: background 0.1s, border-color 0.1s;
+      }
+      .shadow-dot.fired {
+        background: #4c1d95;
+        border-color: #a78bfa;
+        box-shadow: 0 0 8px #7c3aed55;
+      }
     </style>
   </head>
   <body>
@@ -358,6 +407,14 @@
         Drag the slider. Haptic fires each time you cross a 10% threshold —
         triggered by position logic, not the drag event directly.
       </p>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value="50"
+        id="dragRange"
+        step="10"
+      />
       <div class="drag-strip-wrap" id="dragStrip">
         <div class="drag-fill" id="dragFill"></div>
         <div class="drag-thumb" id="dragThumb"></div>
@@ -407,7 +464,44 @@
       </div>
     </div>
 
+    <!-- DEMO 6: Shadow DOM -->
+    <div class="card">
+      <div class="card-title">
+        Demo 6 — Shadow DOM <span class="badge badge-yellow">Experimental</span>
+      </div>
+      <p class="desc">
+        Tap once. A checkbox inside a <code>Shadow DOM</code> is clicked via
+        <code>setTimeout</code> every 300ms for 2 seconds — no active gesture.
+        Theory: shadow boundary event retargeting may bypass iOS gesture checks.
+      </p>
+      <button class="shadow-btn" id="shadowBtn">Tap → fire 2s sequence</button>
+      <div class="shadow-progress-track">
+        <div class="shadow-progress-bar" id="shadowProgressBar"></div>
+      </div>
+      <div class="shadow-dots" id="shadowDots"></div>
+      <div class="log" id="shadowLog">
+        <div class="log-entry">Tap button above to start...</div>
+      </div>
+    </div>
+
     <script>
+      const host = document.getElementById("host");
+
+      const shadow = host.attachShadow({ mode: "open" });
+
+      shadow.innerHTML = `
+  <label id="l">
+    trigger
+    <input id="i" type="checkbox" switch>
+  </label>
+`;
+
+      const label = shadow.getElementById("l");
+
+      document.body.addEventListener("click", () => {
+        label.click();
+      });
+
       // ─── Haptic Engine ────────────────────────────────────────────────────────
 
       let hapticCheckbox = null;
@@ -544,6 +638,7 @@
       const dragFill = document.getElementById("dragFill");
       const dragThumb = document.getElementById("dragThumb");
       const dragVal = document.getElementById("dragValue");
+      const dragRange = document.getElementById("dragRange");
 
       let dragActive = false;
       let lastThreshold = 5; // track last snapped 10% bucket
@@ -589,6 +684,10 @@
 
       dragStrip.addEventListener("touchend", () => {
         dragActive = false;
+      });
+
+      dragRange.addEventListener("change", () => {
+        fireHaptic();
       });
 
       // ─── Demo 4: Grace window ─────────────────────────────────────────────────
@@ -639,6 +738,76 @@
         asyncLog.appendChild(el);
         fireHaptic();
       }, 3000);
+
+      // ─── Demo 6: Shadow DOM ───────────────────────────────────────────────────
+
+      // Build a hidden shadow host with a checkbox switch inside it.
+      // Theory: events crossing the shadow boundary are retargeted by WebKit —
+      // maybe the gesture context check evaluates differently for shadow-internal elements.
+      const shadowHost = document.createElement("div");
+      shadowHost.style.cssText = "position:fixed;top:-200px;pointer-events:none;";
+      document.body.appendChild(shadowHost);
+      const shadowRoot = shadowHost.attachShadow({ mode: "open" });
+      const shadowCb = document.createElement("input");
+      shadowCb.type = "checkbox";
+      shadowCb.setAttribute("switch", "");
+      shadowRoot.appendChild(shadowCb);
+
+      function fireShadowHaptic() {
+        shadowCb.click();
+      }
+
+      const SHADOW_TOTAL_MS = 2000;
+      const SHADOW_INTERVAL = 300;
+      const SHADOW_COUNT = Math.floor(SHADOW_TOTAL_MS / SHADOW_INTERVAL); // 6 haptics
+
+      const shadowBtn         = document.getElementById("shadowBtn");
+      const shadowProgressBar = document.getElementById("shadowProgressBar");
+      const shadowDots        = document.getElementById("shadowDots");
+      const shadowLog         = document.getElementById("shadowLog");
+
+      // Build dot indicators
+      for (let i = 0; i < SHADOW_COUNT; i++) {
+        const dot = document.createElement("div");
+        dot.className = "shadow-dot";
+        dot.id = "sdot-" + i;
+        shadowDots.appendChild(dot);
+      }
+
+      function logShadow(msg) {
+        const el = document.createElement("div");
+        el.className = "log-entry";
+        el.textContent = msg;
+        shadowLog.appendChild(el);
+        shadowLog.scrollTop = shadowLog.scrollHeight;
+      }
+
+      shadowBtn.addEventListener("click", () => {
+        shadowBtn.disabled = true;
+        shadowLog.innerHTML = "";
+        // Reset dots
+        document.querySelectorAll(".shadow-dot").forEach(d => d.classList.remove("fired"));
+        shadowProgressBar.style.width = "0%";
+
+        logShadow("Started — shadow DOM clicks firing via setTimeout…");
+
+        const startTime = performance.now();
+
+        for (let i = 0; i < SHADOW_COUNT; i++) {
+          const delay = (i + 1) * SHADOW_INTERVAL;
+          setTimeout(() => {
+            fireShadowHaptic();
+            const dot = document.getElementById("sdot-" + i);
+            if (dot) dot.classList.add("fired");
+            const pct = Math.round(((i + 1) / SHADOW_COUNT) * 100);
+            shadowProgressBar.style.width = pct + "%";
+            logShadow(`⚡ #${i + 1} at ${Math.round(performance.now() - startTime)}ms — feel it?`);
+            if (i === SHADOW_COUNT - 1) {
+              setTimeout(() => { shadowBtn.disabled = false; }, 500);
+            }
+          }, delay);
+        }
+      });
     </script>
   </body>
 </html>
