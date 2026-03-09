@@ -411,19 +411,28 @@
       // ─── Haptic Engine ────────────────────────────────────────────────────────
 
       let hapticCheckbox = null;
+      let hapticLabel = null;
 
       function ensureCheckbox() {
         if (hapticCheckbox) return;
         hapticCheckbox = document.createElement("input");
+        hapticCheckbox.id = "hapticTrigger";
         hapticCheckbox.type = "checkbox";
         hapticCheckbox.setAttribute("switch", "");
         hapticCheckbox.style.cssText = "position:fixed;top:0px;";
         document.body.appendChild(hapticCheckbox);
+
+        hapticLabel = document.createElement("label");
+        hapticLabel.htmlFor = "hapticTrigger";
+        hapticLabel.textContent = "Haptic Trigger";
+        hapticLabel.style.cssText =
+          "position:fixed;top:0px;left:30px;font-size:12px;color:#fff;";
+        document.body.appendChild(hapticLabel);
       }
 
       function fireHaptic() {
         ensureCheckbox();
-        hapticCheckbox.click();
+        hapticLabel.click();
       }
 
       // ─── Global gesture tracking ──────────────────────────────────────────────
