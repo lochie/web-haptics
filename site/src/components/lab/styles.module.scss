@@ -1,0 +1,287 @@
+.trigger {
+  z-index: 9999999;
+  position: fixed;
+  top: 3.25rem;
+  right: 1rem;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.2;
+  color: var(--color);
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: opacity 400ms ease;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:active {
+    transform: scale(0.85);
+    transition-duration: 200ms;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999999;
+  background: #0c0c0c;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-primary);
+  color: #e8e8e8;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #161616;
+  border-bottom: 1px solid #2a2a2a;
+  gap: 0.75rem;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.headerBtn {
+  background: #2a2a2a;
+  color: #e8e8e8;
+  border: none;
+  border-radius: 6px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  transition: background 150ms ease;
+
+  &:active {
+    background: #3a3a3a;
+  }
+}
+
+.cap {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.1875rem 0.5rem;
+  border-radius: 99px;
+  letter-spacing: 0.3px;
+}
+
+.capYes {
+  background: #14532d;
+  color: #86efac;
+}
+
+.capNo {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+.capUnk {
+  background: #1c1917;
+  color: #a8a29e;
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+// ─── Sections ─────────────────────────────────────────────────────────────────
+
+.section {
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background: #161616;
+  border: none;
+  cursor: pointer;
+  color: #e8e8e8;
+  font-family: var(--font-primary);
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.sectionTitle {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.sectionChevron {
+  font-size: 0.625rem;
+  color: #555;
+}
+
+.sectionBody {
+  border-top: 1px solid #2a2a2a;
+}
+
+// ─── Test rows ────────────────────────────────────────────────────────────────
+
+.testRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid #1e1e1e;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.testLabel {
+  flex: 1;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #e8e8e8;
+
+  small {
+    display: block;
+    font-size: 0.6875rem;
+    color: #666;
+    margin-top: 0.125rem;
+  }
+}
+
+.testBtn {
+  flex-shrink: 0;
+  background: #1a88f8;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-width: 56px;
+  text-align: center;
+  transition: opacity 150ms ease;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+// ─── Log panel ────────────────────────────────────────────────────────────────
+
+.logPanel {
+  flex-shrink: 0;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #2a2a2a;
+  background: #050505;
+}
+
+.logToolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.75rem;
+  background: #161616;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.logLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #555;
+  font-family: var(--font-code);
+}
+
+.logScroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.375rem 0.625rem;
+}
+
+.logEmpty {
+  font-family: var(--font-code);
+  font-size: 0.6875rem;
+  color: #444;
+}
+
+.logEntry {
+  display: flex;
+  gap: 0.5rem;
+  font-family: var(--font-code);
+  font-size: 0.6875rem;
+  line-height: 1.6;
+}
+
+.logTs {
+  color: #444;
+  flex-shrink: 0;
+}
+
+.logMsg {
+  flex: 1;
+  word-break: break-all;
+}
+
+// Log type colours
+.log_info    { color: #e8e8e8; }
+.log_event   { color: #a78bfa; }
+.log_vibrate { color: #34d399; }
+.log_section { color: #1a88f8; font-weight: 700; }
+.log_warn    { color: #f59e0b; }
+.log_error   { color: #ef4444; }

@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useHaptics } from "../../hooks/useHaptics";
 import { Footer } from "../../components/footer";
 import { HapticBuilder } from "../builder";
+import { Lab } from "../../components/lab";
 
 export default function MobileView({
   disabled,
@@ -35,6 +36,7 @@ export default function MobileView({
 
   return (
     <div className={styles.page} data-disabled={!!disabled}>
+      <Lab />
       <div className={styles.debug}>
         <button
           onClick={() => {
