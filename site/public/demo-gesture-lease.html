@@ -1,514 +1,627 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <title>Gesture Lease Haptics</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, sans-serif;
-      background: #0a0a0a;
-      color: #fff;
-      min-height: 100dvh;
-      padding: 24px 16px 48px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    h1 { font-size: 18px; font-weight: 700; color: #fff; }
-    .subtitle { font-size: 13px; color: #666; margin-top: 4px; line-height: 1.4; }
-
-    .card {
-      background: #141414;
-      border: 1px solid #222;
-      border-radius: 16px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .card-title {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #555;
-    }
-
-    .badge {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 7px;
-      border-radius: 99px;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-    .badge-green { background: #0f3d1e; color: #4ade80; }
-    .badge-red   { background: #3d0f0f; color: #f87171; }
-    .badge-yellow{ background: #3d2f0f; color: #fbbf24; }
-
-    .desc {
-      font-size: 13px;
-      color: #888;
-      line-height: 1.5;
-    }
-
-    button, .hold-pad {
-      -webkit-tap-highlight-color: transparent;
-      touch-action: none;
-      user-select: none;
-    }
-
-    /* Standard tap button */
-    .tap-btn {
-      background: #1c1c1e;
-      border: 1px solid #333;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      padding: 16px;
-      width: 100%;
-      cursor: pointer;
-      transition: background 0.1s;
-      position: relative;
-      overflow: hidden;
-    }
-    .tap-btn:active { background: #2a2a2e; }
-
-    /* Hold pad */
-    .hold-pad {
-      background: #1c1c1e;
-      border: 2px solid #333;
-      border-radius: 16px;
-      height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #555;
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
-      position: relative;
-    }
-    .hold-pad.active {
-      border-color: #4ade80;
-      background: #0a1f12;
-      color: #4ade80;
-    }
-
-    /* Pulse ring on hold-pad */
-    .pulse-ring {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: 2px solid #4ade80;
-      opacity: 0;
-      pointer-events: none;
-    }
-    @keyframes pulse-out {
-      0%   { transform: scale(0.5); opacity: 0.8; }
-      100% { transform: scale(2);   opacity: 0; }
-    }
-    .pulse-ring.fire {
-      animation: pulse-out 0.4s ease-out forwards;
-    }
-
-    /* Status bar */
-    .status-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #555;
-    }
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #333;
-      transition: background 0.15s;
-      flex-shrink: 0;
-    }
-    .status-dot.active { background: #4ade80; box-shadow: 0 0 6px #4ade80; }
-
-    /* Counter */
-    .counter {
-      font-size: 32px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: #fff;
-      line-height: 1;
-    }
-    .counter-label { font-size: 12px; color: #555; margin-top: 4px; }
-
-    /* Drag strip */
-    .drag-strip-wrap {
-      position: relative;
-      height: 64px;
-      background: #1c1c1e;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid #2a2a2a;
-    }
-    .drag-fill {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 50%;
-      background: linear-gradient(90deg, #1a3a5c, #2563eb);
-      transition: width 0.0s;
-      border-radius: 12px;
-    }
-    .drag-thumb {
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      left: 50%;
-      transition: left 0.0s;
-    }
-    .drag-value {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-      font-variant-numeric: tabular-nums;
-      mix-blend-mode: difference;
-    }
-    .drag-ticks {
-      display: flex;
-      justify-content: space-between;
-      padding: 0 4px;
-      margin-top: 6px;
-    }
-    .drag-tick { font-size: 10px; color: #444; }
-
-    /* Grace window test */
-    .grace-row {
-      display: flex;
-      gap: 8px;
-    }
-    .grace-btn {
-      flex: 1;
-      background: #1c1c1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 14px 8px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .grace-btn:active { background: #2a2a2e; }
-
-    .log {
-      background: #0f0f0f;
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 11px;
-      font-family: 'SF Mono', monospace;
-      color: #555;
-      max-height: 100px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .log-entry { color: #888; }
-    .log-entry.ok { color: #4ade80; }
-    .log-entry.fail { color: #f87171; }
-
-    .divider {
-      height: 1px;
-      background: #1a1a1a;
-    }
-  </style>
-</head>
-<body>
-
-  <div>
-    <h1>Gesture Lease Haptics</h1>
-    <p class="subtitle">Exploring programmatic haptics on iOS Safari. Requires iOS 18+ / Safari 18+.</p>
-  </div>
-
-  <!-- Global gesture status -->
-  <div class="status-bar">
-    <div class="status-dot" id="gestureStatusDot"></div>
-    <span id="gestureStatusText">No active gesture</span>
-  </div>
-
-  <!-- DEMO 1: Standard tap -->
-  <div class="card">
-    <div class="card-title">Demo 1 — Standard Tap <span class="badge badge-green">Works</span></div>
-    <p class="desc">Haptic fires synchronously inside onClick. This is the baseline.</p>
-    <button class="tap-btn" id="tapBtn">Tap for haptic</button>
-  </div>
-
-  <!-- DEMO 2: Gesture lease -->
-  <div class="card">
-    <div class="card-title">Demo 2 — Gesture Lease <span class="badge badge-yellow">Experimental</span></div>
-    <p class="desc">
-      Hold the pad below. While your finger is down, a <code>setInterval</code> fires haptics every 300ms automatically — no onClick required per-haptic. The gesture is the carrier; the timing is programmatic.
-    </p>
-    <div class="hold-pad" id="holdPad">
-      <span id="holdPadLabel">Hold me</span>
-      <div class="pulse-ring" id="pulseRing"></div>
-    </div>
-    <div style="display:flex; gap:16px; align-items:flex-end;">
-      <div>
-        <div class="counter" id="leaseCounter">0</div>
-        <div class="counter-label">haptics fired</div>
-      </div>
-      <div style="flex:1; font-size:12px; color:#555; line-height:1.5;">
-        Haptic fired by <code>setInterval</code>, not by the touch event itself.
-      </div>
-    </div>
-  </div>
-
-  <!-- DEMO 3: Drag threshold -->
-  <div class="card">
-    <div class="card-title">Demo 3 — Drag Threshold <span class="badge badge-yellow">Experimental</span></div>
-    <p class="desc">Drag the slider. Haptic fires each time you cross a 10% threshold — triggered by position logic, not the drag event directly.</p>
-    <div class="drag-strip-wrap" id="dragStrip">
-      <div class="drag-fill" id="dragFill"></div>
-      <div class="drag-thumb" id="dragThumb"></div>
-      <div class="drag-value" id="dragValue">50%</div>
-    </div>
-    <div class="drag-ticks">
-      <span class="drag-tick">0</span>
-      <span class="drag-tick">25</span>
-      <span class="drag-tick">50</span>
-      <span class="drag-tick">75</span>
-      <span class="drag-tick">100</span>
-    </div>
-  </div>
-
-  <!-- DEMO 4: Grace window test -->
-  <div class="card">
-    <div class="card-title">Demo 4 — Post-gesture Grace Window <span class="badge badge-yellow">Experimental</span></div>
-    <p class="desc">
-      Tap a button, then we attempt haptics after a delay. Tests how long the gesture window stays open after <code>touchend</code>.
-    </p>
-    <div class="grace-row">
-      <button class="grace-btn" onclick="testGrace(0)">0ms</button>
-      <button class="grace-btn" onclick="testGrace(100)">100ms</button>
-      <button class="grace-btn" onclick="testGrace(300)">300ms</button>
-      <button class="grace-btn" onclick="testGrace(1000)">1000ms</button>
-    </div>
-    <div class="log" id="graceLog">
-      <div class="log-entry">Tap a button above to test...</div>
-    </div>
-  </div>
-
-  <!-- DEMO 5: Async attempt — should fail -->
-  <div class="card">
-    <div class="card-title">Demo 5 — Pure Async <span class="badge badge-red">Fails on iOS</span></div>
-    <p class="desc">
-      No touch at all. A <code>setTimeout</code> fires a haptic after 1s from page load — completely unprompted. Should silently fail on iOS.
-    </p>
-    <div class="log" id="asyncLog">
-      <div class="log-entry">Waiting 3 seconds from page load...</div>
-    </div>
-  </div>
-
-  <script>
-    // ─── Haptic Engine ────────────────────────────────────────────────────────
-
-    let hapticCheckbox = null;
-
-    function ensureCheckbox() {
-      if (hapticCheckbox) return;
-      hapticCheckbox = document.createElement('input');
-      hapticCheckbox.type = 'checkbox';
-      hapticCheckbox.setAttribute('switch', '');
-      hapticCheckbox.style.cssText = 'position:fixed;opacity:0;pointer-events:none;top:-100px;';
-      document.body.appendChild(hapticCheckbox);
-    }
-
-    function fireHaptic() {
-      ensureCheckbox();
-      hapticCheckbox.click();
-    }
-
-    // ─── Global gesture tracking ──────────────────────────────────────────────
-
-    let gestureActive = false;
-    let gestureEndTime = 0;
-
-    const gestureStatusDot  = document.getElementById('gestureStatusDot');
-    const gestureStatusText = document.getElementById('gestureStatusText');
-
-    function setGestureActive(active) {
-      gestureActive = active;
-      if (!active) gestureEndTime = performance.now();
-      gestureStatusDot.classList.toggle('active', active);
-      gestureStatusText.textContent = active ? 'Gesture active' : 'No active gesture';
-    }
-
-    document.addEventListener('touchstart', () => setGestureActive(true),  { passive: true });
-    document.addEventListener('touchend',   () => setGestureActive(false), { passive: true });
-    document.addEventListener('touchcancel',() => setGestureActive(false), { passive: true });
-
-    // ─── Demo 1: Standard tap ─────────────────────────────────────────────────
-
-    document.getElementById('tapBtn').addEventListener('click', () => {
-      fireHaptic();
-    });
-
-    // ─── Demo 2: Gesture lease ────────────────────────────────────────────────
-
-    const holdPad      = document.getElementById('holdPad');
-    const holdPadLabel = document.getElementById('holdPadLabel');
-    const pulseRing    = document.getElementById('pulseRing');
-    const leaseCounter = document.getElementById('leaseCounter');
-
-    let leaseInterval   = null;
-    let leaseHapticCount = 0;
-
-    // Haptic queue: code enqueues, rAF loop drains inside gesture context
-    let hapticQueue = 0;
-    let rafLoopId   = null;
-
-    function startRafLoop() {
-      if (rafLoopId) return;
-      const loop = () => {
-        if (hapticQueue > 0) {
-          hapticQueue--;
-          fireHaptic();
-          triggerPulse();
-          leaseHapticCount++;
-          leaseCounter.textContent = leaseHapticCount;
-        }
-        if (gestureActive || hapticQueue > 0) {
-          rafLoopId = requestAnimationFrame(loop);
-        } else {
-          rafLoopId = null;
-        }
-      };
-      rafLoopId = requestAnimationFrame(loop);
-    }
-
-    function triggerPulse() {
-      pulseRing.classList.remove('fire');
-      void pulseRing.offsetWidth; // reflow to restart animation
-      pulseRing.classList.add('fire');
-    }
-
-    holdPad.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      holdPad.classList.add('active');
-      holdPadLabel.textContent = 'Releasing haptics…';
-      startRafLoop();
-
-      // setInterval enqueues haptics — NOT inside the gesture handler
-      leaseInterval = setInterval(() => {
-        hapticQueue++; // just sets a flag; rAF loop fires the actual haptic
-      }, 300);
-    }, { passive: false });
-
-    holdPad.addEventListener('touchend', () => {
-      holdPad.classList.remove('active');
-      holdPadLabel.textContent = 'Hold me';
-      clearInterval(leaseInterval);
-      leaseInterval = null;
-    });
-
-    // ─── Demo 3: Drag threshold ───────────────────────────────────────────────
-
-    const dragStrip = document.getElementById('dragStrip');
-    const dragFill  = document.getElementById('dragFill');
-    const dragThumb = document.getElementById('dragThumb');
-    const dragVal   = document.getElementById('dragValue');
-
-    let dragActive    = false;
-    let lastThreshold = 5; // track last snapped 10% bucket
-
-    function setDragPercent(pct) {
-      pct = Math.max(0, Math.min(100, pct));
-      dragFill.style.width  = pct + '%';
-      dragThumb.style.left  = pct + '%';
-      dragVal.textContent   = Math.round(pct) + '%';
-
-      const bucket = Math.round(pct / 10);
-      if (bucket !== lastThreshold) {
-        lastThreshold = bucket;
-        hapticQueue++; // programmatic: threshold logic, not the event
-        startRafLoop();
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <title>Gesture Lease Haptics</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
+      body {
+        font-family: -apple-system, sans-serif;
+        background: #0a0a0a;
+        color: #fff;
+        min-height: 100dvh;
+        padding: 24px 16px 48px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
 
-    dragStrip.addEventListener('touchstart', (e) => {
-      dragActive = true;
-      const rect = dragStrip.getBoundingClientRect();
-      setDragPercent(((e.touches[0].clientX - rect.left) / rect.width) * 100);
-      startRafLoop();
-    }, { passive: true });
+      h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .subtitle {
+        font-size: 13px;
+        color: #666;
+        margin-top: 4px;
+        line-height: 1.4;
+      }
 
-    dragStrip.addEventListener('touchmove', (e) => {
-      if (!dragActive) return;
-      const rect = dragStrip.getBoundingClientRect();
-      setDragPercent(((e.touches[0].clientX - rect.left) / rect.width) * 100);
-    }, { passive: true });
+      .card {
+        background: #141414;
+        border: 1px solid #222;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
 
-    dragStrip.addEventListener('touchend', () => { dragActive = false; });
+      .card-title {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #555;
+      }
 
-    // ─── Demo 4: Grace window ─────────────────────────────────────────────────
+      .badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 99px;
+        margin-left: 6px;
+        vertical-align: middle;
+      }
+      .badge-green {
+        background: #0f3d1e;
+        color: #4ade80;
+      }
+      .badge-red {
+        background: #3d0f0f;
+        color: #f87171;
+      }
+      .badge-yellow {
+        background: #3d2f0f;
+        color: #fbbf24;
+      }
 
-    const graceLog = document.getElementById('graceLog');
-    graceLog.innerHTML = '';
+      .desc {
+        font-size: 13px;
+        color: #888;
+        line-height: 1.5;
+      }
 
-    function logGrace(msg, ok) {
-      const el = document.createElement('div');
-      el.className = 'log-entry ' + (ok === true ? 'ok' : ok === false ? 'fail' : '');
-      el.textContent = msg;
-      graceLog.appendChild(el);
-      graceLog.scrollTop = graceLog.scrollHeight;
-    }
+      button,
+      .hold-pad {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: none;
+        user-select: none;
+      }
 
-    // We can't detect if the haptic fired from JS — so we rely on user feeling it.
-    // We DO track how long after touchend the attempt was made.
-    function testGrace(delayMs) {
-      graceLog.innerHTML = '';
-      const tapTime = performance.now();
-      logGrace(`Tapped. Firing haptic in ${delayMs}ms…`);
+      /* Standard tap button */
+      .tap-btn {
+        background: #1c1c1e;
+        border: 1px solid #333;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 16px;
+        width: 100%;
+        cursor: pointer;
+        transition: background 0.1s;
+        position: relative;
+        overflow: hidden;
+      }
+      .tap-btn:active {
+        background: #2a2a2e;
+      }
+
+      /* Hold pad */
+      .hold-pad {
+        background: #1c1c1e;
+        border: 2px solid #333;
+        border-radius: 16px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: #555;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+        position: relative;
+      }
+      .hold-pad.active {
+        border-color: #4ade80;
+        background: #0a1f12;
+        color: #4ade80;
+      }
+
+      /* Pulse ring on hold-pad */
+      .pulse-ring {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid #4ade80;
+        opacity: 0;
+        pointer-events: none;
+      }
+      @keyframes pulse-out {
+        0% {
+          transform: scale(0.5);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(2);
+          opacity: 0;
+        }
+      }
+      .pulse-ring.fire {
+        animation: pulse-out 0.4s ease-out forwards;
+      }
+
+      /* Status bar */
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #555;
+      }
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #333;
+        transition: background 0.15s;
+        flex-shrink: 0;
+      }
+      .status-dot.active {
+        background: #4ade80;
+        box-shadow: 0 0 6px #4ade80;
+      }
+
+      /* Counter */
+      .counter {
+        font-size: 32px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        color: #fff;
+        line-height: 1;
+      }
+      .counter-label {
+        font-size: 12px;
+        color: #555;
+        margin-top: 4px;
+      }
+
+      /* Drag strip */
+      .drag-strip-wrap {
+        position: relative;
+        height: 64px;
+        background: #1c1c1e;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #2a2a2a;
+      }
+      .drag-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        background: linear-gradient(90deg, #1a3a5c, #2563eb);
+        transition: width 0s;
+        border-radius: 12px;
+      }
+      .drag-thumb {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        left: 50%;
+        transition: left 0s;
+      }
+      .drag-value {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        font-variant-numeric: tabular-nums;
+        mix-blend-mode: difference;
+      }
+      .drag-ticks {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 4px;
+        margin-top: 6px;
+      }
+      .drag-tick {
+        font-size: 10px;
+        color: #444;
+      }
+
+      /* Grace window test */
+      .grace-row {
+        display: flex;
+        gap: 8px;
+      }
+      .grace-btn {
+        flex: 1;
+        background: #1c1c1e;
+        border: 1px solid #333;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 14px 8px;
+        cursor: pointer;
+        text-align: center;
+      }
+      .grace-btn:active {
+        background: #2a2a2e;
+      }
+
+      .log {
+        background: #0f0f0f;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 11px;
+        font-family: "SF Mono", monospace;
+        color: #555;
+        max-height: 100px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .log-entry {
+        color: #888;
+      }
+      .log-entry.ok {
+        color: #4ade80;
+      }
+      .log-entry.fail {
+        color: #f87171;
+      }
+
+      .divider {
+        height: 1px;
+        background: #1a1a1a;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>Gesture Lease Haptics</h1>
+      <p class="subtitle">
+        Exploring programmatic haptics on iOS Safari. Requires iOS 18+ / Safari
+        18+.
+      </p>
+    </div>
+
+    <!-- Global gesture status -->
+    <div class="status-bar">
+      <div class="status-dot" id="gestureStatusDot"></div>
+      <span id="gestureStatusText">No active gesture</span>
+    </div>
+
+    <!-- DEMO 1: Standard tap -->
+    <div class="card">
+      <div class="card-title">
+        Demo 1 — Standard Tap <span class="badge badge-green">Works</span>
+      </div>
+      <p class="desc">
+        Haptic fires synchronously inside onClick. This is the baseline.
+      </p>
+      <button class="tap-btn" id="tapBtn">Tap for haptic</button>
+    </div>
+
+    <!-- DEMO 2: Gesture lease -->
+    <div class="card">
+      <div class="card-title">
+        Demo 2 — Gesture Lease
+        <span class="badge badge-yellow">Experimental</span>
+      </div>
+      <p class="desc">
+        Hold the pad below. While your finger is down, a
+        <code>setInterval</code> fires haptics every 300ms automatically — no
+        onClick required per-haptic. The gesture is the carrier; the timing is
+        programmatic.
+      </p>
+      <div class="hold-pad" id="holdPad">
+        <span id="holdPadLabel">Hold me</span>
+        <div class="pulse-ring" id="pulseRing"></div>
+      </div>
+      <div style="display: flex; gap: 16px; align-items: flex-end">
+        <div>
+          <div class="counter" id="leaseCounter">0</div>
+          <div class="counter-label">haptics fired</div>
+        </div>
+        <div style="flex: 1; font-size: 12px; color: #555; line-height: 1.5">
+          Haptic fired by <code>setInterval</code>, not by the touch event
+          itself.
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 3: Drag threshold -->
+    <div class="card">
+      <div class="card-title">
+        Demo 3 — Drag Threshold
+        <span class="badge badge-yellow">Experimental</span>
+      </div>
+      <p class="desc">
+        Drag the slider. Haptic fires each time you cross a 10% threshold —
+        triggered by position logic, not the drag event directly.
+      </p>
+      <div class="drag-strip-wrap" id="dragStrip">
+        <div class="drag-fill" id="dragFill"></div>
+        <div class="drag-thumb" id="dragThumb"></div>
+        <div class="drag-value" id="dragValue">50%</div>
+      </div>
+      <div class="drag-ticks">
+        <span class="drag-tick">0</span>
+        <span class="drag-tick">25</span>
+        <span class="drag-tick">50</span>
+        <span class="drag-tick">75</span>
+        <span class="drag-tick">100</span>
+      </div>
+    </div>
+
+    <!-- DEMO 4: Grace window test -->
+    <div class="card">
+      <div class="card-title">
+        Demo 4 — Post-gesture Grace Window
+        <span class="badge badge-yellow">Experimental</span>
+      </div>
+      <p class="desc">
+        Tap a button, then we attempt haptics after a delay. Tests how long the
+        gesture window stays open after <code>touchend</code>.
+      </p>
+      <div class="grace-row">
+        <button class="grace-btn" onclick="testGrace(0)">0ms</button>
+        <button class="grace-btn" onclick="testGrace(100)">100ms</button>
+        <button class="grace-btn" onclick="testGrace(300)">300ms</button>
+        <button class="grace-btn" onclick="testGrace(1000)">1000ms</button>
+      </div>
+      <div class="log" id="graceLog">
+        <div class="log-entry">Tap a button above to test...</div>
+      </div>
+    </div>
+
+    <!-- DEMO 5: Async attempt — should fail -->
+    <div class="card">
+      <div class="card-title">
+        Demo 5 — Pure Async <span class="badge badge-red">Fails on iOS</span>
+      </div>
+      <p class="desc">
+        No touch at all. A <code>setTimeout</code> fires a haptic after 1s from
+        page load — completely unprompted. Should silently fail on iOS.
+      </p>
+      <div class="log" id="asyncLog">
+        <div class="log-entry">Waiting 3 seconds from page load...</div>
+      </div>
+    </div>
+
+    <script>
+      // ─── Haptic Engine ────────────────────────────────────────────────────────
+
+      let hapticCheckbox = null;
+
+      function ensureCheckbox() {
+        if (hapticCheckbox) return;
+        hapticCheckbox = document.createElement("input");
+        hapticCheckbox.type = "checkbox";
+        hapticCheckbox.setAttribute("switch", "");
+        hapticCheckbox.style.cssText = "position:fixed;opacity:0;top:-100px;";
+        document.body.appendChild(hapticCheckbox);
+      }
+
+      function fireHaptic() {
+        ensureCheckbox();
+        hapticCheckbox.click();
+      }
+
+      // ─── Global gesture tracking ──────────────────────────────────────────────
+
+      let gestureActive = false;
+      let gestureEndTime = 0;
+
+      const gestureStatusDot = document.getElementById("gestureStatusDot");
+      const gestureStatusText = document.getElementById("gestureStatusText");
+
+      function setGestureActive(active) {
+        gestureActive = active;
+        if (!active) gestureEndTime = performance.now();
+        gestureStatusDot.classList.toggle("active", active);
+        gestureStatusText.textContent = active
+          ? "Gesture active"
+          : "No active gesture";
+      }
+
+      document.addEventListener("touchstart", () => setGestureActive(true), {
+        passive: true,
+      });
+      document.addEventListener("touchend", () => setGestureActive(false), {
+        passive: true,
+      });
+      document.addEventListener("touchcancel", () => setGestureActive(false), {
+        passive: true,
+      });
+
+      // ─── Demo 1: Standard tap ─────────────────────────────────────────────────
+
+      document.getElementById("tapBtn").addEventListener("click", () => {
+        fireHaptic();
+      });
+
+      // ─── Demo 2: Gesture lease ────────────────────────────────────────────────
+
+      const holdPad = document.getElementById("holdPad");
+      const holdPadLabel = document.getElementById("holdPadLabel");
+      const pulseRing = document.getElementById("pulseRing");
+      const leaseCounter = document.getElementById("leaseCounter");
+
+      let leaseInterval = null;
+      let leaseHapticCount = 0;
+
+      // Haptic queue: code enqueues, rAF loop drains inside gesture context
+      let hapticQueue = 0;
+      let rafLoopId = null;
+
+      function startRafLoop() {
+        if (rafLoopId) return;
+        const loop = () => {
+          if (hapticQueue > 0) {
+            hapticQueue--;
+            fireHaptic();
+            triggerPulse();
+            leaseHapticCount++;
+            leaseCounter.textContent = leaseHapticCount;
+          }
+          if (gestureActive || hapticQueue > 0) {
+            rafLoopId = requestAnimationFrame(loop);
+          } else {
+            rafLoopId = null;
+          }
+        };
+        rafLoopId = requestAnimationFrame(loop);
+      }
+
+      function triggerPulse() {
+        pulseRing.classList.remove("fire");
+        void pulseRing.offsetWidth; // reflow to restart animation
+        pulseRing.classList.add("fire");
+      }
+
+      holdPad.addEventListener(
+        "touchstart",
+        (e) => {
+          e.preventDefault();
+          holdPad.classList.add("active");
+          holdPadLabel.textContent = "Releasing haptics…";
+          startRafLoop();
+
+          // setInterval enqueues haptics — NOT inside the gesture handler
+          leaseInterval = setInterval(() => {
+            hapticQueue++; // just sets a flag; rAF loop fires the actual haptic
+          }, 300);
+        },
+        { passive: false },
+      );
+
+      holdPad.addEventListener("touchend", () => {
+        holdPad.classList.remove("active");
+        holdPadLabel.textContent = "Hold me";
+        clearInterval(leaseInterval);
+        leaseInterval = null;
+      });
+
+      // ─── Demo 3: Drag threshold ───────────────────────────────────────────────
+
+      const dragStrip = document.getElementById("dragStrip");
+      const dragFill = document.getElementById("dragFill");
+      const dragThumb = document.getElementById("dragThumb");
+      const dragVal = document.getElementById("dragValue");
+
+      let dragActive = false;
+      let lastThreshold = 5; // track last snapped 10% bucket
+
+      function setDragPercent(pct) {
+        pct = Math.max(0, Math.min(100, pct));
+        dragFill.style.width = pct + "%";
+        dragThumb.style.left = pct + "%";
+        dragVal.textContent = Math.round(pct) + "%";
+
+        const bucket = Math.round(pct / 10);
+        if (bucket !== lastThreshold) {
+          lastThreshold = bucket;
+          hapticQueue++; // programmatic: threshold logic, not the event
+          startRafLoop();
+        }
+      }
+
+      dragStrip.addEventListener(
+        "touchstart",
+        (e) => {
+          dragActive = true;
+          const rect = dragStrip.getBoundingClientRect();
+          setDragPercent(
+            ((e.touches[0].clientX - rect.left) / rect.width) * 100,
+          );
+          startRafLoop();
+        },
+        { passive: true },
+      );
+
+      dragStrip.addEventListener(
+        "touchmove",
+        (e) => {
+          if (!dragActive) return;
+          const rect = dragStrip.getBoundingClientRect();
+          setDragPercent(
+            ((e.touches[0].clientX - rect.left) / rect.width) * 100,
+          );
+        },
+        { passive: true },
+      );
+
+      dragStrip.addEventListener("touchend", () => {
+        dragActive = false;
+      });
+
+      // ─── Demo 4: Grace window ─────────────────────────────────────────────────
+
+      const graceLog = document.getElementById("graceLog");
+      graceLog.innerHTML = "";
+
+      function logGrace(msg, ok) {
+        const el = document.createElement("div");
+        el.className =
+          "log-entry " + (ok === true ? "ok" : ok === false ? "fail" : "");
+        el.textContent = msg;
+        graceLog.appendChild(el);
+        graceLog.scrollTop = graceLog.scrollHeight;
+      }
+
+      // We can't detect if the haptic fired from JS — so we rely on user feeling it.
+      // We DO track how long after touchend the attempt was made.
+      function testGrace(delayMs) {
+        graceLog.innerHTML = "";
+        const tapTime = performance.now();
+        logGrace(`Tapped. Firing haptic in ${delayMs}ms…`);
+
+        setTimeout(() => {
+          const sinceTouchEnd = gestureActive
+            ? 0
+            : Math.round(performance.now() - gestureEndTime);
+          fireHaptic();
+          if (gestureActive) {
+            logGrace(`⚡ Fired (gesture still active)`, true);
+          } else {
+            logGrace(
+              `⚡ Fired ${sinceTouchEnd}ms after touchend — did you feel it?`,
+            );
+          }
+        }, delayMs);
+      }
+
+      // ─── Demo 5: Pure async (should fail) ────────────────────────────────────
+
+      const asyncLog = document.getElementById("asyncLog");
 
       setTimeout(() => {
-        const sinceTouchEnd = gestureActive ? 0 : Math.round(performance.now() - gestureEndTime);
+        asyncLog.innerHTML = "";
+        const el = document.createElement("div");
+        el.className = "log-entry";
+        el.textContent = "⚡ Fired haptic at 3s (no gesture). Feel anything?";
+        asyncLog.appendChild(el);
         fireHaptic();
-        if (gestureActive) {
-          logGrace(`⚡ Fired (gesture still active)`, true);
-        } else {
-          logGrace(`⚡ Fired ${sinceTouchEnd}ms after touchend — did you feel it?`);
-        }
-      }, delayMs);
-    }
-
-    // ─── Demo 5: Pure async (should fail) ────────────────────────────────────
-
-    const asyncLog = document.getElementById('asyncLog');
-
-    setTimeout(() => {
-      asyncLog.innerHTML = '';
-      const el = document.createElement('div');
-      el.className = 'log-entry';
-      el.textContent = '⚡ Fired haptic at 3s (no gesture). Feel anything?';
-      asyncLog.appendChild(el);
-      fireHaptic();
-    }, 3000);
-  </script>
-</body>
+      }, 3000);
+    </script>
+  </body>
 </html>
