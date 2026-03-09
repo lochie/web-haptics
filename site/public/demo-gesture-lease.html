@@ -306,8 +306,12 @@
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
       }
-      .shadow-btn:active { background: #2a2a2e; }
-      .shadow-btn:disabled { opacity: 0.4; }
+      .shadow-btn:active {
+        background: #2a2a2e;
+      }
+      .shadow-btn:disabled {
+        opacity: 0.4;
+      }
 
       .shadow-progress-track {
         height: 4px;
@@ -334,7 +338,9 @@
         border-radius: 50%;
         background: #222;
         border: 1px solid #333;
-        transition: background 0.1s, border-color 0.1s;
+        transition:
+          background 0.1s,
+          border-color 0.1s;
       }
       .shadow-dot.fired {
         background: #4c1d95;
@@ -485,23 +491,6 @@
     </div>
 
     <script>
-      const host = document.getElementById("host");
-
-      const shadow = host.attachShadow({ mode: "open" });
-
-      shadow.innerHTML = `
-  <label id="l">
-    trigger
-    <input id="i" type="checkbox" switch>
-  </label>
-`;
-
-      const label = shadow.getElementById("l");
-
-      document.body.addEventListener("click", () => {
-        label.click();
-      });
-
       // ─── Haptic Engine ────────────────────────────────────────────────────────
 
       let hapticCheckbox = null;
@@ -526,15 +515,8 @@
 
       function fireHaptic() {
         ensureCheckbox();
-        hapticLabel.focus();
-        const event = new KeyboardEvent("keydown", {
-          key: " ",
-          code: "Space",
-          keyCode: 32,
-          which: 32,
-          bubbles: true,
-        });
-        hapticLabel.dispatchEvent(event);
+        //hapticLabel.focus();
+        hapticLabel.click();
       }
 
       // ─── Global gesture tracking ──────────────────────────────────────────────
@@ -745,7 +727,8 @@
       // Theory: events crossing the shadow boundary are retargeted by WebKit —
       // maybe the gesture context check evaluates differently for shadow-internal elements.
       const shadowHost = document.createElement("div");
-      shadowHost.style.cssText = "position:fixed;top:-200px;pointer-events:none;";
+      shadowHost.style.cssText =
+        "position:fixed;top:-200px;pointer-events:none;";
       document.body.appendChild(shadowHost);
       const shadowRoot = shadowHost.attachShadow({ mode: "open" });
       const shadowCb = document.createElement("input");
@@ -761,10 +744,10 @@
       const SHADOW_INTERVAL = 300;
       const SHADOW_COUNT = Math.floor(SHADOW_TOTAL_MS / SHADOW_INTERVAL); // 6 haptics
 
-      const shadowBtn         = document.getElementById("shadowBtn");
+      const shadowBtn = document.getElementById("shadowBtn");
       const shadowProgressBar = document.getElementById("shadowProgressBar");
-      const shadowDots        = document.getElementById("shadowDots");
-      const shadowLog         = document.getElementById("shadowLog");
+      const shadowDots = document.getElementById("shadowDots");
+      const shadowLog = document.getElementById("shadowLog");
 
       // Build dot indicators
       for (let i = 0; i < SHADOW_COUNT; i++) {
@@ -786,7 +769,9 @@
         shadowBtn.disabled = true;
         shadowLog.innerHTML = "";
         // Reset dots
-        document.querySelectorAll(".shadow-dot").forEach(d => d.classList.remove("fired"));
+        document
+          .querySelectorAll(".shadow-dot")
+          .forEach((d) => d.classList.remove("fired"));
         shadowProgressBar.style.width = "0%";
 
         logShadow("Started — shadow DOM clicks firing via setTimeout…");
@@ -801,9 +786,13 @@
             if (dot) dot.classList.add("fired");
             const pct = Math.round(((i + 1) / SHADOW_COUNT) * 100);
             shadowProgressBar.style.width = pct + "%";
-            logShadow(`⚡ #${i + 1} at ${Math.round(performance.now() - startTime)}ms — feel it?`);
+            logShadow(
+              `⚡ #${i + 1} at ${Math.round(performance.now() - startTime)}ms — feel it?`,
+            );
             if (i === SHADOW_COUNT - 1) {
-              setTimeout(() => { shadowBtn.disabled = false; }, 500);
+              setTimeout(() => {
+                shadowBtn.disabled = false;
+              }, 500);
             }
           }, delay);
         }
