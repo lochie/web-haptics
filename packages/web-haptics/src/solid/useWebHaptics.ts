@@ -1,4 +1,4 @@
-import { createEffect, onCleanup, onMount } from "solid-js";
+import { createEffect, on, onCleanup, onMount } from "solid-js";
 import { WebHaptics } from "../lib/web-haptics";
 import type {
   HapticInput,
@@ -18,9 +18,25 @@ export function useWebHaptics(options?: WebHapticsOptions) {
     instance = null;
   });
 
-  createEffect(() => {
-    instance?.setDebug(options?.debug ?? false);
-  });
+  createEffect(
+    on(
+      () => options?.debug,
+      (debug) => {
+        instance?.setDebug(debug ?? false);
+      },
+      { defer: true },
+    ),
+  );
+
+  createEffect(
+    on(
+      () => options?.showSwitch,
+      (showSwitch) => {
+        instance?.setShowSwitch(showSwitch ?? false);
+      },
+      { defer: true },
+    ),
+  );
 
   const trigger = (input?: HapticInput, options?: TriggerOptions) =>
     instance?.trigger(input, options);
