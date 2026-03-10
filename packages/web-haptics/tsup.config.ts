@@ -38,6 +38,19 @@ export default defineConfig((options) => {
       minify: !options.watch,
       banner: { js: '"use client";' },
     },
+    // SolidJS
+    {
+      entry: {
+        "solid/index": "src/solid/index.ts",
+      },
+      format: ["cjs", "esm"],
+      dts: true,
+      target: "es2022",
+      treeshake: true,
+      external: ["solid-js"],
+      esbuildPlugins: [aliasCorePlugin],
+      minify: !options.watch,
+    },
     // Vue
     {
       entry: {
