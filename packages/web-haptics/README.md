@@ -112,7 +112,13 @@ Show or hide the haptic feedback toggle switch.
 
 ### `WebHaptics.isSupported`
 
-Static boolean — `true` if the device supports the Vibration API.
+Static boolean — `true` if WebHaptics can attempt haptics on this device,
+either through the Vibration API or the touch fallback used on platforms like
+iPhone.
+
+### `WebHaptics.supportsVibrationApi`
+
+Static boolean — `true` if the device exposes `navigator.vibrate`.
 
 ## License
 

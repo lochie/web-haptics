@@ -14,6 +14,14 @@ export function createWebHaptics(options?: WebHapticsOptions) {
   const destroy = () => instance.destroy();
   const setDebug = (debug: boolean) => instance.setDebug(debug);
   const isSupported = WebHaptics.isSupported;
+  const supportsVibrationApi = WebHaptics.supportsVibrationApi;
 
-  return { trigger, cancel, destroy, setDebug, isSupported };
+  return {
+    trigger,
+    cancel,
+    destroy,
+    setDebug,
+    isSupported,
+    supportsVibrationApi,
+  };
 }

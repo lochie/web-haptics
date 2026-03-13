@@ -61,7 +61,12 @@ const methods = [
   {
     signature: "WebHaptics.isSupported: boolean",
     description:
-      "Static property. Returns true if the device supports the Vibration API.",
+      "Static property. Returns true if WebHaptics can attempt haptics through either the Vibration API or the touch fallback.",
+  },
+  {
+    signature: "WebHaptics.supportsVibrationApi: boolean",
+    description:
+      "Static property. Returns true when the device exposes navigator.vibrate.",
   },
 ];
 
@@ -175,7 +180,7 @@ export const Docs = () => {
         <CodeBlock
           code={`import { useWebHaptics } from 'web-haptics/react';
 
-const { trigger, cancel, isSupported } = useWebHaptics({
+const { trigger, cancel, isSupported, supportsVibrationApi } = useWebHaptics({
   debug: false,
 });`}
         />
@@ -186,7 +191,7 @@ const { trigger, cancel, isSupported } = useWebHaptics({
         <CodeBlock
           code={`import { useWebHaptics } from 'web-haptics/vue';
 
-const { trigger, cancel, isSupported } = useWebHaptics();`}
+const { trigger, cancel, isSupported, supportsVibrationApi } = useWebHaptics();`}
         />
       </details>
 
@@ -195,7 +200,7 @@ const { trigger, cancel, isSupported } = useWebHaptics();`}
         <CodeBlock
           code={`import { createWebHaptics } from 'web-haptics/svelte';
 
-const { trigger, cancel, destroy, isSupported } = createWebHaptics();
+const { trigger, cancel, destroy, isSupported, supportsVibrationApi } = createWebHaptics();
 onDestroy(destroy);`}
         />
       </details>
