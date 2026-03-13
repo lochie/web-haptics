@@ -133,6 +133,39 @@ function toVibratePattern(
 
 let instanceCounter = 0;
 
+function supportsVibrationApi(): boolean {
+  return (
+    typeof navigator !== "undefined" && typeof navigator.vibrate === "function"
+  );
+}
+
+function supportsTouchFallback(): boolean {
+  if (typeof navigator === "undefined") {
+    return false;
+  }
+
+  if (navigator.maxTouchPoints > 0) {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  if ("ontouchstart" in window) {
+    return true;
+  }
+
+  if (typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  return (
+    window.matchMedia("(pointer: coarse)").matches ||
+    window.matchMedia("(any-pointer: coarse)").matches
+  );
+}
+
 export class WebHaptics {
   private hapticLabel: HTMLLabelElement | null = null;
   private domInitialized = false;
@@ -152,8 +185,13 @@ export class WebHaptics {
     this.showSwitch = options?.showSwitch ?? false;
   }
 
-  static readonly isSupported: boolean =
-    typeof navigator !== "undefined" && typeof navigator.vibrate === "function";
+  static get supportsVibrationApi(): boolean {
+    return supportsVibrationApi();
+  }
+
+  static get isSupported(): boolean {
+    return supportsVibrationApi() || supportsTouchFallback();
+  }
 
   async trigger(
     input: HapticInput = [{ duration: 25, intensity: 0.7 }],

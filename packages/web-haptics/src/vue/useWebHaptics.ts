@@ -29,6 +29,7 @@ export function useWebHaptics(options?: WebHapticsOptions) {
     instance?.trigger(input, options);
   const cancel = () => instance?.cancel();
   const isSupported = WebHaptics.isSupported;
+  const supportsVibrationApi = WebHaptics.supportsVibrationApi;
 
-  return { trigger, cancel, isSupported };
+  return { trigger, cancel, isSupported, supportsVibrationApi };
 }
