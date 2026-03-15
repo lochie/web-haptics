@@ -61,7 +61,7 @@ const methods = [
   {
     signature: "WebHaptics.isSupported: boolean",
     description:
-      "Static property. Returns true if the device supports the Vibration API.",
+      "Static property. Returns true if the device supports haptics (iPhone and Android). Returns false on iPad, desktops, and other non-mobile platforms.",
   },
 ];
 
