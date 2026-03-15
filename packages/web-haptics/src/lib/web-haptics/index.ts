@@ -155,15 +155,35 @@ export class WebHaptics {
   private static readonly supportsVibrationAPI: boolean =
     typeof navigator !== "undefined" && typeof navigator.vibrate === "function";
 
-  static readonly isSupported: boolean =
-    typeof navigator !== "undefined" &&
-    (typeof navigator.vibrate === "function" ||
-      navigator.maxTouchPoints > 0);
+  private static readonly isMobileDevice: boolean = (() => {
+    if (typeof navigator === "undefined") return false;
+    if (navigator.maxTouchPoints <= 0) return false;
+
+    if ("userAgentData" in navigator) {
+      return (navigator.userAgentData as { mobile: boolean }).mobile === true;
+    }
+
+    // Safari & Firefox fallback
+    const userAgent = navigator.userAgent;
+    if (/Android|iPhone|iPod/.test(userAgent)) return true;
+
+    return false;
+  })();
+
+  private static readonly needsTouchFallback = WebHaptics.isMobileDevice && !WebHaptics.supportsVibrationAPI;
+
+  static readonly isSupported: boolean = WebHaptics.isMobileDevice;
 
   async trigger(
     input: HapticInput = [{ duration: 25, intensity: 0.7 }],
     options?: TriggerOptions,
   ): Promise<void> {
+
+    if (!WebHaptics.isSupported && !this.debug) {
+      console.warn(`[web-haptics] Haptics not supported on this device.`,);
+      return;
+    }
+
     const normalized = normalizeInput(input);
     if (!normalized) return;
 
@@ -195,7 +215,7 @@ export class WebHaptics {
       navigator.vibrate(toVibratePattern(vibrations, defaultIntensity));
     }
 
-    if (!WebHaptics.supportsVibrationAPI || this.debug) {
+    if (WebHaptics.needsTouchFallback || this.debug) {
       this.ensureDOM();
       if (!this.hapticLabel) return;
 
