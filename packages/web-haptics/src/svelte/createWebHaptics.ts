@@ -1,3 +1,4 @@
+import { onDestroy } from "svelte";
 import { WebHaptics } from "../lib/web-haptics";
 import type {
   HapticInput,
@@ -14,6 +15,8 @@ export function createWebHaptics(options?: WebHapticsOptions) {
   const destroy = () => instance.destroy();
   const setDebug = (debug: boolean) => instance.setDebug(debug);
   const isSupported = WebHaptics.isSupported;
+
+  onDestroy(destroy);
 
   return { trigger, cancel, destroy, setDebug, isSupported };
 }

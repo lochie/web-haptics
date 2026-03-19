@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
-  import { createWebHaptics } from 'web-haptics/svelte';
+  import { createWebHaptics } from "web-haptics/svelte";
 
-  const { trigger, destroy } = createWebHaptics();
-  onDestroy(destroy);
+  const { trigger } = createWebHaptics();
 </script>
 
 <div class="container">
