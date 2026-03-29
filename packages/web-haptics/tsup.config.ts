@@ -1,43 +1,70 @@
-import { defineConfig } from "tsup";
+import { defineConfig, type Options } from "tsup";
 
-export default defineConfig((options) => [
-  // Core + React
-  {
-    entry: {
-      index: "src/index.ts",
-      "react/index": "src/react/index.ts",
-    },
-    format: ["cjs", "esm"],
-    dts: true,
-    clean: true,
-    sourcemap: false,
-    target: "es2022",
-    external: ["react"],
-    minify: !options.watch,
-    banner: { js: '"use client";' },
+const aliasCorePlugin = {
+  name: "alias-core",
+  setup(build: any) {
+    build.onResolve({ filter: /\.\.\/lib\/web-haptics/ }, () => ({
+      path: "web-haptics",
+      external: true,
+    }));
   },
-  // Vue
-  {
-    entry: {
-      "vue/index": "src/vue/index.ts",
+};
+
+export default defineConfig((options) => {
+  const configs: Options[] = [
+    // Core
+    {
+      entry: {
+        index: "src/index.ts",
+      },
+      format: ["cjs", "esm"],
+      dts: true,
+      clean: true,
+      target: "es2022",
+      treeshake: true,
+      minify: !options.watch,
     },
-    format: ["cjs", "esm"],
-    dts: true,
-    sourcemap: false,
-    target: "es2022",
-    external: ["vue"],
-    minify: !options.watch,
-  },
-  // Svelte
-  {
-    entry: {
-      "svelte/index": "src/svelte/index.ts",
+    // React
+    {
+      entry: {
+        "react/index": "src/react/index.ts",
+      },
+      format: ["cjs", "esm"],
+      dts: true,
+      target: "es2022",
+      treeshake: true,
+      external: ["react", "react/jsx-runtime"],
+      esbuildPlugins: [aliasCorePlugin],
+      minify: !options.watch,
+      banner: { js: '"use client";' },
     },
-    format: ["cjs", "esm"],
-    dts: true,
-    sourcemap: false,
-    target: "es2022",
-    external: ["svelte"],
-    minify: !options.watch,
-  },
-]);
+    // Vue
+    {
+      entry: {
+        "vue/index": "src/vue/index.ts",
+      },
+      format: ["cjs", "esm"],
+      dts: true,
+      target: "es2022",
+      treeshake: true,
+      external: ["vue"],
+      esbuildPlugins: [aliasCorePlugin],
+      minify: !options.watch,
+    },
+    // Svelte
+    {
+      entry: {
+        "svelte/index": "src/svelte/index.ts",
+      },
+      format: ["cjs", "esm"],
+      dts: true,
+      target: "es2022",
+      treeshake: true,
+      external: ["svelte"],
+      esbuildPlugins: [aliasCorePlugin],
+      minify: !options.watch,
+    },
+  ];
+
+  return configs;
+});

@@ -85,6 +85,19 @@ haptics.trigger("success");
 Next.js: add "use client" to any component using useWebHaptics().
 Nuxt/SvelteKit: works directly, library handles SSR.
 
+## Trigger Presets & defaultPatterns
+
+All named string presets have a corresponding object in `defaultPatterns`. Use when you need to pass a preset as a value rather than a string literal:
+
+```ts
+import { WebHaptics, defaultPatterns } from 'web-haptics'
+
+const haptics = new WebHaptics()
+haptics.trigger(defaultPatterns.light)
+```
+
+Extra presets not listed above: `"soft"`, `"rigid"`, `"nudge"`, `"buzz"`. See `defaultPatterns` for all available values.
+
 ## Apple HIG Design Rules -- FOLLOW THESE
 
 1. Haptics supplement, never replace. Always pair with visual feedback. UI must work fully without haptics.

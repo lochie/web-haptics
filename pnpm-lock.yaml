@@ -206,8 +206,8 @@ importers:
         specifier: ^8
         version: 8.5.6
       torph:
-        specifier: ^0.0.5
-        version: 0.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(svelte@4.2.20)(vue@3.5.24(typescript@5.2.2))
+        specifier: ^0.0.9
+        version: 0.0.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue@3.5.24(typescript@5.2.2))
       typescript:
         specifier: ^5.0.2
         version: 5.2.2
@@ -3286,12 +3286,12 @@ packages:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
 
-  torph@0.0.5:
-    resolution: {integrity: sha512-A9mwvWouyRIIZ8Y9McJioZ4O5itSjgtfPQMGxU+qvA5MYaF31EY1Cq3OpOLT34wXLhsfOC7tto5Gzg0d6I3NQg==}
+  torph@0.0.9:
+    resolution: {integrity: sha512-WrFMtJwqXCfIXbLNuTOwHWff0XVm/Ewctb+71bFis3HykPvCXl1CHXapU0r67pQhAI323fsA1L2pGPeqxXeRRA==}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
-      svelte: '>=4'
+      svelte: '>=5'
       vue: '>=3'
     peerDependenciesMeta:
       react:
@@ -7093,11 +7093,10 @@ snapshots:
     dependencies:
       is-number: 7.0.0
 
-  torph@0.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(svelte@4.2.20)(vue@3.5.24(typescript@5.2.2)):
+  torph@0.0.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue@3.5.24(typescript@5.2.2)):
     optionalDependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      svelte: 4.2.20
       vue: 3.5.24(typescript@5.2.2)
 
   tr46@1.0.1:
