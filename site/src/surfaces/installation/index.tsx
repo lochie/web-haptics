@@ -9,10 +9,9 @@ import { useHaptics } from "../../hooks/useHaptics";
 
 const pkgCmds = {
   npm: "npm i web-haptics",
-  pnpm: "pnpm i web-haptics",
+  pnpm: "pnpm add web-haptics",
   yarn: "yarn add web-haptics",
-  bun: "bun i web-haptics",
-  skill: "npx skills add lochie/web-haptics",
+  bun: "bun add web-haptics",
 };
 
 export const InstallCommands = () => {
