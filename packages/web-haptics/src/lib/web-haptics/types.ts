@@ -1,3 +1,5 @@
+import type { DefaultPatternName } from "./patterns";
+
 export interface Vibration {
   duration: number;
   intensity?: number;
@@ -10,7 +12,11 @@ export interface HapticPreset {
   pattern: Vibration[];
 }
 
-export type HapticInput = number | string | HapticPattern | HapticPreset;
+export type HapticInput =
+  | number
+  | DefaultPatternName
+  | HapticPattern
+  | HapticPreset;
 
 export interface TriggerOptions {
   intensity?: number;

@@ -67,3 +67,5 @@ export const defaultPatterns = {
     pattern: [{ duration: 1000, intensity: 1 }],
   },
 } as const satisfies Record<string, HapticPreset>;
+
+export type DefaultPatternName = keyof typeof defaultPatterns;
