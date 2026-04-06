@@ -20,11 +20,7 @@ function normalizeInput(input: HapticInput): {
   }
 
   if (typeof input === "string") {
-    const preset = defaultPatterns[input as keyof typeof defaultPatterns];
-    if (!preset) {
-      console.warn(`[web-haptics] Unknown preset: "${input}"`);
-      return null;
-    }
+    const preset = defaultPatterns[input];
     return { vibrations: preset.pattern.map((v) => ({ ...v })) };
   }
 

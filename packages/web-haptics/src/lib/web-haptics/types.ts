@@ -15,7 +15,6 @@ export interface HapticPreset {
 export type HapticInput =
   | number
   | DefaultPatternName
-  | (string & {})
   | HapticPattern
   | HapticPreset;
 
