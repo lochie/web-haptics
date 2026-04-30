@@ -32,7 +32,7 @@ const { trigger } = useWebHaptics();
   const { trigger } = createWebHaptics();
 </script>
 
-<button on:click={() => trigger()}>Tap me</button>`,
+<button onclick={() => trigger()}>Tap me</button>`,
 };
 
 const frameworks = [
