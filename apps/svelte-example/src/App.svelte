@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
-  import { createWebHaptics } from 'web-haptics/svelte';
+  import { createWebHaptics } from "web-haptics/svelte";
 
-  const { trigger, destroy } = createWebHaptics();
-  onDestroy(destroy);
+  const { trigger } = createWebHaptics();
 </script>
 
 <div class="container">
-  <button on:click={() => trigger()}>Tap me</button>
+  <button onclick={() => trigger()}>Tap me</button>
 </div>
 
 <style>
