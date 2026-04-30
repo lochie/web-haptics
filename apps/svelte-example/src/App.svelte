@@ -5,7 +5,7 @@
 </script>
 
 <div class="container">
-  <button on:click={() => trigger()}>Tap me</button>
+  <button onclick={() => trigger()}>Tap me</button>
 </div>
 
 <style>
