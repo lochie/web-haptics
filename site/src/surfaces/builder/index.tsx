@@ -2,7 +2,6 @@ import { useReducer, useRef, useCallback, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { defaultPatterns } from "web-haptics";
 import type { HapticPreset, Vibration } from "web-haptics";
-import { TextMorph } from "torph/react";
 
 import styles from "./styles.module.scss";
 import { useHaptics } from "../../hooks/useHaptics";
@@ -702,9 +701,7 @@ export const HapticBuilder = () => {
       </div>
 
       {/* Code output */}
-      <CodeBlock code={code}>
-        <TextMorph>{code}</TextMorph>
-      </CodeBlock>
+      <CodeBlock code={code} />
     </div>
   );
 };

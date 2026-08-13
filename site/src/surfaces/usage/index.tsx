@@ -2,8 +2,6 @@ import styles from "./styles.module.scss";
 
 import { useState } from "react";
 
-import { TextMorph } from "torph/react";
-
 import * as Logos from "./logos";
 
 import { CodeBlock } from "../../components/codeblock";
@@ -71,8 +69,6 @@ export const Usage = () => {
   const { trigger } = useWebHaptics({ debug });
   const [frameworkIndex, setFrameworkIndex] = useState(0);
 
-  const example = frameworks[frameworkIndex % frameworks.length].example;
-
   return (
     <div className={styles.usage}>
       <div className={styles.commands}>
@@ -92,9 +88,9 @@ export const Usage = () => {
         ))}
       </div>
 
-      <CodeBlock code={example}>
-        <TextMorph>{example}</TextMorph>
-      </CodeBlock>
+      <CodeBlock
+        code={frameworks[frameworkIndex % frameworks.length].example}
+      />
     </div>
   );
 };

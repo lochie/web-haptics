@@ -1,16 +1,15 @@
 import { useState } from "react";
 
 import styles from "./styles.module.scss";
-import { AutoResize } from "../auto-resizer";
 import { TextMorph } from "torph/react";
 import { useHaptics } from "../../hooks/useHaptics";
 
 export const CodeBlock = ({
   code,
-  children,
+  prefix,
 }: {
   code: string;
-  children?: React.ReactNode;
+  prefix?: React.ReactNode;
 }) => {
   const { trigger } = useHaptics();
 
@@ -34,7 +33,10 @@ export const CodeBlock = ({
         <TextMorph>{isCopied ? "Copied" : "Copy"}</TextMorph>
       </button>
       <pre>
-        <AutoResize>{children ?? code}</AutoResize>
+        {prefix}
+        {/* torph's root sets white-space: nowrap, which drops leading
+            indentation until the first morph rewrites it as nbsp segments */}
+        <TextMorph style={{ whiteSpace: "pre" }}>{code}</TextMorph>
       </pre>
     </div>
   );
