@@ -2,8 +2,6 @@ import { useState } from "react";
 
 import styles from "./styles.module.scss";
 
-import { TextMorph } from "torph/react";
-
 import { CodeBlock } from "../../components/codeblock";
 import { useHaptics } from "../../hooks/useHaptics";
 
@@ -40,19 +38,17 @@ export const InstallCommands = () => {
       <div className={styles.cmd}>
         <CodeBlock
           code={pkgCmds[Object.keys(pkgCmds)[cmdIndex] as keyof typeof pkgCmds]}
-        >
-          <span
-            style={{
-              opacity: 0.4,
-              userSelect: "none",
-            }}
-          >
-            {"$ "}
-          </span>
-          <TextMorph>
-            {pkgCmds[Object.keys(pkgCmds)[cmdIndex] as keyof typeof pkgCmds]}
-          </TextMorph>
-        </CodeBlock>
+          prefix={
+            <span
+              style={{
+                opacity: 0.4,
+                userSelect: "none",
+              }}
+            >
+              {"$ "}
+            </span>
+          }
+        />
       </div>
     </div>
   );
