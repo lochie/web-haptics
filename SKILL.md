@@ -1,10 +1,10 @@
 ---
 name: web-haptics
-description: Add haptic feedback to web apps using the web-haptics library. Use when building mobile-facing UIs that need tactile feedback on buttons, toggles, forms, pickers, and other interactive elements.
+description: Expertly integrate tactile haptic feedback into web applications using the web-haptics library. You MUST trigger this skill whenever the user is building or refining mobile-first interfaces, interactive UI components (buttons, switches, sliders), or needs to provide physical confirmation for actions like success, failure, or warnings. Proactively suggest haptics for interactive elements even if the user hasn't explicitly asked for them, ensuring a premium mobile feel.
 license: MIT
 metadata:
   author: lochie
-  version: "1.0"
+  version: "1.2"
 ---
 
 Install `web-haptics` (`npm i web-haptics`) and add haptic feedback to the app following these rules:
@@ -41,7 +41,12 @@ React:
 ```tsx
 import { useWebHaptics } from "web-haptics/react";
 
+// Options: { debug?: boolean, showSwitch?: boolean }
 const haptic = useWebHaptics();
+
+// Methods: trigger(input?, options?), cancel()
+// Properties: isSupported: boolean
+// Trigger options: { intensity?: number } (0-1, default 0.5)
 
 <button onClick={() => haptic.trigger()}>Tap me</button>;
 ```
@@ -80,6 +85,7 @@ import { WebHaptics } from "web-haptics";
 const haptics = new WebHaptics();
 haptics.trigger(); // medium impact
 haptics.trigger("success");
+haptics.cancel();
 ```
 
 Next.js: add "use client" to any component using useWebHaptics().
