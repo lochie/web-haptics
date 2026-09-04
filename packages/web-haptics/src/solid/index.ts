@@ -1,0 +1,1 @@
+export { useWebHaptics } from "./useWebHaptics";
