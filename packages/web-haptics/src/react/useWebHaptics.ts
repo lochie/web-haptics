@@ -11,8 +11,11 @@ import type {
 export function useWebHaptics(options?: WebHapticsOptions) {
   const instanceRef = useRef<WebHaptics | null>(null);
 
-  useEffect(() => {
+  if (instanceRef.current === null) {
     instanceRef.current = new WebHaptics(options);
+  }
+
+  useEffect(() => {
     return () => {
       instanceRef.current?.destroy();
       instanceRef.current = null;
